@@ -1,0 +1,25 @@
+h1 Listing outing_lines
+
+table
+  tr
+    th Outing
+    th Line
+    th Street
+    th Numbers
+    th
+    th
+    th
+
+  - @outing_lines.each do |outing_line|
+    tr
+      td = outing_line.outing_id
+      td = outing_line.line
+      td = outing_line.street_id
+      td = outing_line.numbers
+      td = link_to 'Show', outing_line
+      td = link_to 'Edit', edit_outing_line_path(outing_line)
+      td = link_to 'Destroy', outing_line, :confirm => 'Are you sure?', :method => :delete
+
+br
+
+= link_to 'New Outing line', new_outing_line_path

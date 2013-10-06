@@ -1,0 +1,18 @@
+p#notice = notice
+
+p
+  strong City:
+  = @street.city_id
+p
+  strong Name:
+  = @street.name
+p
+  strong Other spellings:
+  = @street.other_spellings
+p
+  strong Metaphone:
+  = @street.metaphone
+
+= link_to 'Edit', edit_street_path(@street)
+'|
+= link_to 'Back', streets_path

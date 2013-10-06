@@ -1,0 +1,58 @@
+= form_for @outing, :html => { :class => "form-horizontal" } do |f|
+  .control-group
+    .controls
+      = f.hidden_field :user_id, value: current_user.id, :class => 'text_field'
+  .control-group
+    = f.label :campaign_id, :class => 'control-label'
+    .controls
+      = f.select :campaign_id, campaign_select
+  .control-group
+    = f.label :city_id, :class => 'control-label'
+    .controls
+      = f.select :city_id, campaign_city_select( Campaign.first )
+  / .control-group
+  /   = f.label :date, :class => 'control-label'
+  /   .controls
+  /     = f.text_field :date, :class => 'text_field'
+  / .control-group
+  /   = f.label :status, :class => 'control-label'
+  /   .controls
+  /     = f.text_field :status, :class => 'text_field'
+  - if @outing.lines.any?
+    = f.fields_for :lines, @outing.lines do |line|
+      - errors = line.object.errors
+      - street = line.object.street
+      - new_street = street.try( :new_record? )
+      - confirmed_street_name = line.object.confirmed_street_name
+      .control-group class="#{'error' if errors.any?} #{'success' if new_street}"
+        = line.label :street, :class => 'control-label'
+        .controls
+          - if confirmed_street_name
+            = text_field_tag nil, line.object.line, :class => 'text_field', disabled: confirmed_street_name
+            = line.hidden_field :line
+          - else
+            = line.text_field :line, :class => 'text_field'
+
+          p class="#{'text-error' if errors.any?} #{'text-success' if new_street}"
+            = errors.full_messages.join " "
+          - if confirmed_street_name
+            = line.hidden_field :confirmed_street_name, :class => 'text_field'
+          - elsif line.object.parses?
+            = line.select :confirmed_street_name, similar_street_select( line ),
+              {include_blank: "Select Action"}
+        
+  - else
+    br
+    .control-group
+      = f.label :report, :class => 'control-label'
+      .controls
+        = f.text_area :report, :class => 'text_area'
+
+  .control-group
+    = f.label :comments, :class => 'control-label'
+    .controls
+      = f.text_area :comments, :class => 'text_area'
+  .form-actions
+    = f.submit nil, :class => 'btn btn-primary'
+    '
+    = link_to t('.cancel', :default => t("helpers.links.cancel")), outings_path, :class => 'btn'

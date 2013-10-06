@@ -1,0 +1,21 @@
+h1 Listing blocks
+
+table
+  tr
+    th Street
+    th Number
+    th
+    th
+    th
+
+  - @blocks.each do |block|
+    tr
+      td = block.street_id
+      td = block.number
+      td = link_to 'Show', block
+      td = link_to 'Edit', edit_block_path(block)
+      td = link_to 'Destroy', block, :confirm => 'Are you sure?', :method => :delete
+
+br
+
+= link_to 'New Block', new_block_path

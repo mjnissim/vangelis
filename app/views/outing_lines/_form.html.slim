@@ -1,0 +1,21 @@
+= form_for @outing_line do |f|
+  - if @outing_line.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@outing_line.errors.count, "error")} prohibited this outing_line from being saved:"
+      ul
+        - @outing_line.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label :outing_id
+    = f.number_field :outing_id
+  .field
+    = f.label :line
+    = f.text_area :line
+  .field
+    = f.label :street_id
+    = f.number_field :street_id
+  .field
+    = f.label :numbers
+    = f.text_area :numbers
+  .actions = f.submit 'Save'

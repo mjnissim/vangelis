@@ -1,0 +1,12 @@
+p#notice = notice
+
+p
+  strong Street:
+  = @block.street_id
+p
+  strong Number:
+  = @block.number
+
+= link_to 'Edit', edit_block_path(@block)
+'|
+= link_to 'Back', blocks_path

@@ -1,0 +1,25 @@
+h1 Listing streets
+
+table
+  tr
+    th City
+    th Name
+    th Other spellings
+    th Metaphone
+    th
+    th
+    th
+
+  - @streets.each do |street|
+    tr
+      td = street.city_id
+      td = street.name
+      td = street.other_spellings
+      td = street.metaphone
+      td = link_to 'Show', street
+      td = link_to 'Edit', edit_street_path(street)
+      td = link_to 'Destroy', street, :confirm => 'Are you sure?', :method => :delete
+
+br
+
+= link_to 'New Street', new_street_path

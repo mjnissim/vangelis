@@ -1,0 +1,21 @@
+= form_for @street do |f|
+  - if @street.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@street.errors.count, "error")} prohibited this street from being saved:"
+      ul
+        - @street.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label :city_id
+    = f.number_field :city_id
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :other_spellings
+    = f.text_field :other_spellings
+  .field
+    = f.label :metaphone
+    = f.text_field :metaphone
+  .actions = f.submit 'Save'
