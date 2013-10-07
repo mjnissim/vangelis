@@ -75,7 +75,7 @@ class OutingLine < ActiveRecord::Base
   def similar_streets
     return [] unless name
     
-    @similar_streets ||= Street.search_by_sound( name, outing.city )
+    @similar_streets ||= Street.search_similar( name, outing.city )
     @similar_streets.reject!{ |street| street.name == name }
     @similar_streets
   end
