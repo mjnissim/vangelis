@@ -63,6 +63,10 @@ class OutingLine < ActiveRecord::Base
     name != name_from_line
   end
   
+  def new_street?
+    self.street.try( :new_record? )
+  end
+  
   def update_other_spellings_for street
     other_spellings = (street.other_spellings << name_from_line)
     street.update_attributes other_spellings: other_spellings.uniq

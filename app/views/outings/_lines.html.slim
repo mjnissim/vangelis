@@ -1,0 +1,23 @@
+table.table.table-striped
+  = f.fields_for :lines, @outing.lines do |line_fields|
+    - o = line_fields.object
+    - error_or_success = o.new_street? ? 'text-success' : ('text-error' if o.errors.any?)
+    tr class=error_or_success
+      td
+        = line_fields.label :street, :class => 'control-label'
+      td
+        - if o.confirmed_street_name
+          = text_field_tag nil, o.line, :class => 'text_field',
+              disabled: o.confirmed_street_name
+          = line_fields.hidden_field :line
+        - else
+          = line_fields.text_field :line, :class => 'text_field'
+      td
+        p
+          = o.errors.full_messages.join " "
+      td
+        - if o.confirmed_street_name
+          = line_fields.hidden_field :confirmed_street_name, :class => 'text_field'
+        - elsif o.new_street? or o.similar_streets.any?
+          = line_fields.select :confirmed_street_name, similar_street_select( o ),
+            {include_blank: "Select Action"}

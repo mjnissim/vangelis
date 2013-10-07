@@ -8,11 +8,11 @@ module ApplicationHelper
   end
   
   def similar_street_select line
-      ar = line.object.similar_streets.map{ |street|
+      ar = line.similar_streets.map{ |street|
       [ "I meant '#{street.name}'",
         street.name ]
       }
-      ar = ar << ["Create New Street '#{line.object.name}'", line.object.name]
+      ar = ar << ["Create New Street '#{line.name}'", line.name]
       ar
   end
 end
