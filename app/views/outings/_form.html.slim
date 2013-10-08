@@ -20,12 +20,13 @@
     .control-group
       = f.label :report, :class => 'control-label'
       .controls
-        = f.text_area :report, :class => 'text_area'
+        = f.text_area :report, :class => 'text_area span5', rows: 10,
+          placeholder: report_placeholder_text
 
   .control-group
     = f.label :comments, :class => 'control-label'
     .controls
-      = f.text_area :comments, :class => 'text_area'
+      = f.text_area :comments, :class => 'text_area span5', rows: 5
   .form-actions
     = f.submit nil, :class => 'btn btn-primary'
     '

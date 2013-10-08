@@ -5,11 +5,10 @@ class Street < ActiveRecord::Base
   serialize :metaphone, Array
   
   def self.find_by_name name, city
-    street = where( 'lower(name) = ? and city_id = ?',
-      name.downcase, city ).first
+    street = city.streets.where( 'lower(name) = ?', name.downcase ).first
     return street if street.present?
 
-    street = where( city: city ).find do |street|
+    street = city.streets.find do |street|
       street.other_spellings.map(&:downcase).include?( name.downcase )
     end
   end
@@ -22,9 +21,8 @@ class Street < ActiveRecord::Base
   def self.search_by_sound name, city
     mp = Text::Metaphone.double_metaphone( name )
     mp.compact!
-    where( city: city ).select do |s|
-      ( s.metaphone - mp ).size < s.metaphone.size
-    end
+    
+    city.streets.select{ |s| ( s.metaphone & mp ).any? }
   end
   
   # "Ha" is the Hebrew equivalent to "The". Dropping "Ha"
