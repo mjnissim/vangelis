@@ -37,7 +37,7 @@ class OutingLine < ActiveRecord::Base
     end
     
     process_street
-    # process_numbers numbers
+    process_numbers
   end
   
   def process_street
@@ -69,7 +69,7 @@ class OutingLine < ActiveRecord::Base
   
   def update_other_spellings_for street
     other_spellings = (street.other_spellings << name_from_line)
-    street.update_attributes other_spellings: other_spellings.uniq
+    street.update_attributes other_spellings: other_spellings
   end
   
   def similar_streets
@@ -80,6 +80,15 @@ class OutingLine < ActiveRecord::Base
     @similar_streets
   end
   
-  def process_numbers numbers
+  def process_numbers
+    RangeParser.parse numbers
+
+    rescue Exception => exc
+      msg = "Couldn't parse the block numbers. Please double check them."
+      errors.add( :base, msg )
+  end
+  
+  def numbers
+    match.try( :[], 2 )
   end
 end

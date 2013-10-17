@@ -3,8 +3,6 @@ vangelis
 
 Gradual street blitzing made easy.
 
-== README
-
 
 * Ruby version
 
@@ -23,7 +21,3 @@ Gradual street blitzing made easy.
 * Deployment instructions
 
 * ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.

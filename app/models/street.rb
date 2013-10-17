@@ -1,7 +1,7 @@
 class Street < ActiveRecord::Base
   belongs_to :city
   
-  serialize :other_spellings, Array
+  serialize :other_spellings, Set
   serialize :metaphone, Array
   
   def self.find_by_name name, city

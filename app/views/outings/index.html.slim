@@ -29,5 +29,5 @@ table class="table table-striped"
           '
           = link_to t('.destroy', :default => t("helpers.links.destroy")), outing_path(outing), :method => :delete, :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) }, :class => 'btn btn-mini btn-danger'
 
-= link_to t('.new', :default => t("helpers.links.new")), new_outing_path, :class => 'btn btn-primary'
+= link_to t('.new', :default => t("helpers.links.new")), new_outing_path, :class => 'btn btn-primary', "data-no-turbolink" => true
 

@@ -20,9 +20,13 @@
     .control-group
       = f.label :report, :class => 'control-label'
       .controls
-        = f.text_area :report, :class => 'text_area span5', rows: 10,
-          placeholder: report_placeholder_text
-
+        = f.text_area :report, :class => 'text_area span5', rows: 10
+          
+        = link_to 'Examples', nil,
+          :class => "popover-with-html badge badge-info",
+          "data-content" => report_placeholder_text,
+          "data-trigger" => 'hover'
+        
   .control-group
     = f.label :comments, :class => 'control-label'
     .controls
