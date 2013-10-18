@@ -1,0 +1,18 @@
+p#notice = notice
+
+p
+  strong Assignment:
+  = @assignment_line.assignment_id
+p
+  strong Line:
+  = @assignment_line.line
+p
+  strong Street:
+  = @assignment_line.street_id
+p
+  strong Numbers:
+  = @assignment_line.numbers
+
+= link_to 'Edit', edit_assignment_line_path(@assignment_line)
+'|
+= link_to 'Back', assignment_lines_path

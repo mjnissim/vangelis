@@ -1,0 +1,21 @@
+= form_for @assignment_line do |f|
+  - if @assignment_line.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@assignment_line.errors.count, "error")} prohibited this assignment_line from being saved:"
+      ul
+        - @assignment_line.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label :assignment_id
+    = f.number_field :assignment_id
+  .field
+    = f.label :line
+    = f.text_area :line
+  .field
+    = f.label :street_id
+    = f.number_field :street_id
+  .field
+    = f.label :numbers
+    = f.text_area :numbers
+  .actions = f.submit 'Save'

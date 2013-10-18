@@ -1,0 +1,25 @@
+h1 Listing assignment_lines
+
+table
+  tr
+    th Assignment
+    th Line
+    th Street
+    th Numbers
+    th
+    th
+    th
+
+  - @assignment_lines.each do |assignment_line|
+    tr
+      td = assignment_line.assignment_id
+      td = assignment_line.line
+      td = assignment_line.street_id
+      td = assignment_line.numbers
+      td = link_to 'Show', assignment_line
+      td = link_to 'Edit', edit_assignment_line_path(assignment_line)
+      td = link_to 'Destroy', assignment_line, :confirm => 'Are you sure?', :method => :delete
+
+br
+
+= link_to 'New Assignment line', new_assignment_line_path

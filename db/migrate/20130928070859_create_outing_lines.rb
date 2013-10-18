@@ -1,7 +1,7 @@
-class CreateOutingLines < ActiveRecord::Migration
+class CreateAssignmentLines < ActiveRecord::Migration
   def change
-    create_table :outing_lines do |t|
-      t.integer :outing_id, :null => false
+    create_table :assignment_lines do |t|
+      t.integer :assignment_id, :null => false
       t.text :line
       t.integer :street_id
       t.text :numbers

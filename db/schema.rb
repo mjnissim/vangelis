@@ -42,8 +42,8 @@ ActiveRecord::Schema.define(version: 20131001155817) do
 
   add_index "cities", ["name"], name: "index_cities_on_name", unique: true
 
-  create_table "outing_lines", force: true do |t|
-    t.integer  "outing_id",  null: false
+  create_table "assignment_lines", force: true do |t|
+    t.integer  "assignment_id",  null: false
     t.text     "line"
     t.integer  "street_id"
     t.text     "numbers"
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20131001155817) do
     t.datetime "updated_at"
   end
 
-  create_table "outings", force: true do |t|
+  create_table "assignments", force: true do |t|
     t.integer  "user_id",     null: false
     t.integer  "campaign_id", null: false
     t.datetime "date"

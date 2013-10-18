@@ -1,4 +1,4 @@
-module OutingsHelper
+module AssignmentsHelper
   def report_placeholder_text
     s = "<b>Put each street and its block numbers on a new line:</b>
     <br /><br />

@@ -1,6 +1,6 @@
-class OutingLine < ActiveRecord::Base
-  belongs_to :outing, inverse_of: :lines
-  has_one :city, through: :outing
+class AssignmentLine < ActiveRecord::Base
+  belongs_to :assignment, inverse_of: :lines
+  has_one :city, through: :assignment
   belongs_to :street
   
   attr_writer :confirmed_street_name
@@ -41,21 +41,21 @@ class OutingLine < ActiveRecord::Base
   end
   
   def process_street
-    street = Street.find_by_name( name, outing.city )
+    street = Street.find_by_name( name, assignment.city )
 
     case
     when street
       self.street = street
       update_other_spellings_for( street ) if other_spelling?
     when confirmed_street_name
-      self.build_street name: name, city: outing.city
+      self.build_street name: name, city: assignment.city
     when similar_streets.any?
       msg = "Found similar street names. Please choose action."
       errors.add(:base, msg)
     when similar_streets.none?
       msg = "'#{name}' will be created. Please confirm."
       errors.add(:base, msg)
-      self.build_street name: name, city: outing.city
+      self.build_street name: name, city: assignment.city
     end
   end
   
@@ -75,7 +75,7 @@ class OutingLine < ActiveRecord::Base
   def similar_streets
     return [] unless name
     
-    @similar_streets ||= Street.search_similar( name, outing.city )
+    @similar_streets ||= Street.search_similar( name, assignment.city )
     @similar_streets.reject!{ |street| street.name == name }
     @similar_streets
   end

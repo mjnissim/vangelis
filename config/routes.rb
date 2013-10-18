@@ -10,15 +10,15 @@ Vangelis::Application.routes.draw do
 
   resources :campaigns
 
-  resources :outings
+  resources :assignments
 
-  resources :outing_lines
+  resources :assignment_lines
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'outings#new'
+  root 'assignments#new'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

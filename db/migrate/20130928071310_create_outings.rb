@@ -1,6 +1,6 @@
-class CreateOutings < ActiveRecord::Migration
+class CreateAssignments < ActiveRecord::Migration
   def change
-    create_table :outings do |t|
+    create_table :assignments do |t|
       t.integer :user_id, null: false
       t.integer :campaign_id, null: false
       t.datetime :date

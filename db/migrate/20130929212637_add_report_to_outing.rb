@@ -1,5 +1,5 @@
-class AddReportToOuting < ActiveRecord::Migration
+class AddReportToAssignment < ActiveRecord::Migration
   def change
-    add_column :outings, :report, :text
+    add_column :assignments, :report, :text
   end
 end

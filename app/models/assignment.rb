@@ -1,6 +1,6 @@
-class Outing < ActiveRecord::Base
-  has_many :lines, :class_name => 'OutingLine',
-    dependent: :destroy, inverse_of: :outing
+class Assignment < ActiveRecord::Base
+  has_many :lines, :class_name => 'AssignmentLine',
+    dependent: :destroy, inverse_of: :assignment
   belongs_to :city
   
   accepts_nested_attributes_for :lines, allow_destroy: true, 
@@ -13,7 +13,7 @@ class Outing < ActiveRecord::Base
   
   attr_accessor :report
   
-  before_validation do |outing|
+  before_validation do |assignment|
     build_lines_from_report if self.lines.none?
   end
   
@@ -22,8 +22,8 @@ class Outing < ActiveRecord::Base
     lines.each{ |line| self.lines.build line: line }
   end
   
-  before_save do |outing|
+  before_save do |assignment|
     # Next line is until I allow the user to set the date himself.
-    outing.date = outing.created_at || Time.now
+    assignment.date = assignment.created_at || Time.now
   end
 end
