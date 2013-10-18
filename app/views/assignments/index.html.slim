@@ -1,29 +1,28 @@
 - model_class = Assignment
 div class="page-header"
   h1=t '.title', :default => model_class.model_name.human.pluralize.titleize
+
+= link_to t('.new', :default => t("helpers.links.new")), new_assignment_path, :class => 'btn btn-primary', "data-no-turbolink" => true
+
+p
+
 table class="table table-striped"
   thead
     tr
-      th= model_class.human_attribute_name(:id)
-      th= model_class.human_attribute_name(:user_id)
-      th= model_class.human_attribute_name(:campaign_id)
       th= model_class.human_attribute_name(:date)
+      th= model_class.human_attribute_name(:user_id)
+      th Campaign
       th= model_class.human_attribute_name(:status)
-      th= model_class.human_attribute_name(:city_id)
       th= model_class.human_attribute_name(:comments)
-      th= model_class.human_attribute_name(:created_at)
-      th=t '.actions', :default => t("helpers.actions")
+      th
   tbody
     - @assignments.each do |assignment|
       tr
-        td= link_to assignment.id, assignment_path(assignment)
-        td= assignment.user_id
-        td= assignment.campaign_id
-        td= assignment.date
+        td= link_to assignment.date, assignment_path(assignment)
+        td= assignment.user.email
+        td= "#{assignment.campaign.name} (#{assignment.city.name})"
         td= assignment.status
-        td= assignment.city_id
         td= assignment.comments
-        td=l assignment.created_at
         td
           / = link_to t('.edit', :default => t("helpers.links.edit")), edit_assignment_path(assignment), :class => 'btn btn-mini'
           '

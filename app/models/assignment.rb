@@ -2,6 +2,8 @@ class Assignment < ActiveRecord::Base
   has_many :lines, :class_name => 'AssignmentLine',
     dependent: :destroy, inverse_of: :assignment
   belongs_to :city
+  belongs_to :user
+  belongs_to :campaign
   
   accepts_nested_attributes_for :lines, allow_destroy: true, 
     reject_if: proc { |attributes|

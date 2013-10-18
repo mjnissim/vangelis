@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>app/models/outing_line.rb</string>
+	<string>app/views/campaigns/show.html.slim</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,24 +21,39 @@
 	<integer>228</integer>
 	<key>metaData</key>
 	<dict>
-		<key>app/models/outing_line.rb</key>
+		<key>app/views/campaigns/index.html.slim</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>29</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>87</integer>
+				<integer>9</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>65</integer>
+			<integer>0</integer>
+		</dict>
+		<key>app/views/campaigns/show.html.slim</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>app/models/outing_line.rb</string>
+		<string>app/views/campaigns/index.html.slim</string>
+		<string>app/views/campaigns/show.html.slim</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>

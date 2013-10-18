@@ -3,13 +3,13 @@ div class="page-header"
   h1=t '.title', :default => model_class.model_name.human.titleize
 
 p
-  strong= model_class.human_attribute_name(:user_id) + ':'
+  strong Submitted by:
   br
-  = @assignment.user_id
+  = @assignment.user.email
 p
   strong= model_class.human_attribute_name(:campaign_id) + ':'
   br
-  = @assignment.campaign_id
+  = "#{@assignment.campaign.name} (#{@assignment.city.name})"
 p
   strong= model_class.human_attribute_name(:date) + ':'
   br
@@ -19,13 +19,14 @@ p
   br
   = @assignment.status
 p
-  strong= model_class.human_attribute_name(:city_id) + ':'
+  strong Details:
   br
-  = @assignment.city_id
-p
-  strong= model_class.human_attribute_name(:report) + ':'
-  br
-  = @assignment.report
+  - @assignment.lines.each do |asn|
+    = asn.street.name
+    '
+    = asn.numbers
+    br
+  
 p
   strong= model_class.human_attribute_name(:comments) + ':'
   br
