@@ -6,6 +6,27 @@ p
   strong Cities:
   br
   = campaign_cities @campaign
+  
+p
+  strong Streets:
+  table.table.table-striped.table-bordered
+    - @campaign.assignments.group_by(&:city).each do |city, assignments|
+      tr
+        td colspan="3"
+          strong= city.name
+      - assignments.each do |assignment|
+        - assignment.lines.each do |line|
+          tr
+            td
+              = line.street.name
+            td
+              = line.numbers
+            td= "Total: 1,000,000 blocks"
+          
+
+br
+
+
 p
   strong= model_class.human_attribute_name(:comments) + ':'
   br

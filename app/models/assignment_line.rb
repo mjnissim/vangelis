@@ -81,14 +81,19 @@ class AssignmentLine < ActiveRecord::Base
   end
   
   def process_numbers
-    RangeParser.parse numbers
-
-    rescue Exception => exc
+    rp = RangeParser.new( numbers )
+    
+    if not rp.parses?
       msg = "Couldn't parse the block numbers. Please double check them."
       errors.add( :base, msg )
+    end
   end
   
   def numbers
     match.try( :[], 2 )
+  end
+  
+  def numbers_ar
+    
   end
 end

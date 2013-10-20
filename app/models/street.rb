@@ -1,8 +1,15 @@
 class Street < ActiveRecord::Base
+  
+  # SIZES = {SMALL=0 => 'Small', MEDIUM=1 => 'Medium', LARGE=2 => 'Large'}
+  
   belongs_to :city
   
   serialize :other_spellings, Set
   serialize :metaphone, Array
+  
+  # def moshe
+  #   SIZES[MEDIUM]
+  # end
   
   def self.find_by_name name, city
     street = city.streets.where( 'lower(name) = ?', name.downcase ).first
