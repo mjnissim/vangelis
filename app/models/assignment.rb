@@ -5,6 +5,8 @@ class Assignment < ActiveRecord::Base
   belongs_to :user
   belongs_to :campaign
   
+  # SUGGESTION: MARK BLOCKS THAT ARE BEING BUILT, FOR A FUTURE VISIT.
+  
   accepts_nested_attributes_for :lines, allow_destroy: true, 
     reject_if: proc { |attributes|
       attributes['line'].blank? and

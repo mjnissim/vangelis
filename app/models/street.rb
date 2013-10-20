@@ -3,6 +3,7 @@ class Street < ActiveRecord::Base
   # SIZES = {SMALL=0 => 'Small', MEDIUM=1 => 'Medium', LARGE=2 => 'Large'}
   
   belongs_to :city
+  has_many :assignment_lines
   
   serialize :other_spellings, Set
   serialize :metaphone, Array
@@ -45,6 +46,18 @@ class Street < ActiveRecord::Base
       search_by_sound variation, city
     end
     streets.uniq
+  end
+  
+  def highest_reported_number
+    assignment_lines.map{ |l| l.numbers_ar.max}.max
+  end
+  
+  def highest_number
+    highest_reported_number
+  end
+  
+  def all_numbers
+    [*1..highest_number]
   end
   
   before_save do

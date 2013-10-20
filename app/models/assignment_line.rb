@@ -36,8 +36,7 @@ class AssignmentLine < ActiveRecord::Base
       errors.add(:base, msg) and return
     end
     
-    process_street
-    process_numbers
+    process_numbers and process_street
   end
   
   def process_street
@@ -80,13 +79,14 @@ class AssignmentLine < ActiveRecord::Base
     @similar_streets
   end
   
+  # Attempts to process block numbers and returns true or false accordingly.
   def process_numbers
     rp = RangeParser.new( numbers )
+    return true if rp.parses?
     
-    if not rp.parses?
-      msg = "Couldn't parse the block numbers. Please double check them."
-      errors.add( :base, msg )
-    end
+    msg = "Couldn't parse the block numbers. Please double check them."
+    errors.add( :base, msg )
+    return false
   end
   
   def numbers
@@ -94,6 +94,6 @@ class AssignmentLine < ActiveRecord::Base
   end
   
   def numbers_ar
-    
+    RangeParser.new( numbers ).to_a
   end
 end

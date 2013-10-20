@@ -31,6 +31,8 @@ private
       even_odd ? ar.select{ |n| n.send "#{even_odd}?" } : ar
     end
     
+    raise if @ar.none?
+    
     @ar.uniq! if @uniq
     @ar.sort! if @sort
     

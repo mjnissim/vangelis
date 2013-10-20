@@ -2,35 +2,29 @@
 div class="page-header"
   h1= @campaign.name
 
-p
-  strong Cities:
-  br
-  = campaign_cities @campaign
-  
-p
-  strong Streets:
+- if @campaign.comments.present?
+  p
+    strong= model_class.human_attribute_name(:comments) + ':'
+    br
+    = @campaign.comments
+
+
+h3 Covered blocks
+
+- @campaign.lines_by_city_and_street(covered: true).each do |city, streets|
   table.table.table-striped.table-bordered
-    - @campaign.assignments.group_by(&:city).each do |city, assignments|
+    tr
+      td colspan="3"
+        strong= city.name
+    - streets.each do |street, numbers|
       tr
-        td colspan="3"
-          strong= city.name
-      - assignments.each do |assignment|
-        - assignment.lines.each do |line|
-          tr
-            td
-              = line.street.name
-            td
-              = line.numbers
-            td= "Total: 1,000,000 blocks"
-          
+        td= street.name
+        td= numbers.join ", "
+        td= "#{numbers.size} blocks"          
 
-br
+h3 Remaining
 
 
-p
-  strong= model_class.human_attribute_name(:comments) + ':'
-  br
-  = @campaign.comments
 
 .form-actions
   = link_to t('.back', :default => t("helpers.links.back")), campaigns_path, :class => 'btn'
