@@ -6,7 +6,6 @@ class AssignmentLine < ActiveRecord::Base
   attr_writer :confirmed_street_name
   
   validate :process_line
-  # validates :street, presence: true
   
   STREET_AND_NUMBERS = /\A(\D*)\s+(\d.*)/
   

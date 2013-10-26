@@ -53,10 +53,10 @@ class Street < ActiveRecord::Base
   end
   
   def highest_number
-    highest_reported_number
+    [high_number.to_i, highest_reported_number.to_i].max
   end
   
-  def all_numbers
+  def numbers
     [*1..highest_number]
   end
   

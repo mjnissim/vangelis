@@ -26,15 +26,17 @@ class AssignmentsController < ApplicationController
   # POST /assignments.json
   def create
     @assignment = Assignment.new(assignment_params)
-
     respond_to do |format|
       if @assignment.save
         format.html { redirect_to @assignment, notice: 'Assignment was successfully created.' }
         format.json { render action: 'show', status: :created, location: @assignment }
       else
+        [:"lines.base", :lines].each{|key| @assignment.errors.delete(key) }
+        flash.now[:error] = @assignment.errors.full_messages
         format.html { render action: 'new' }
         format.json { render json: @assignment.errors, status: :unprocessable_entity }
       end
+    
     end
   end
 

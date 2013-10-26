@@ -20,7 +20,7 @@ table class="table table-striped"
       tr
         td= link_to assignment.date, assignment_path(assignment)
         td= assignment.user.email
-        td= "#{assignment.campaign.name} (#{assignment.city.name})"
+        td= link_to_assignment_campaign assignment
         td= assignment.status
         td= assignment.comments
         td

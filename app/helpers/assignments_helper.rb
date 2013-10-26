@@ -16,4 +16,9 @@ module AssignmentsHelper
     
     s.html_safe
   end
+  
+  def link_to_assignment_campaign assignment
+    link_to "#{assignment.campaign.name} (#{assignment.city.name})",
+      assignment.campaign
+  end
 end

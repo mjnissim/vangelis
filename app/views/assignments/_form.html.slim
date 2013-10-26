@@ -10,10 +10,10 @@
       td
         = f.label :city_id, :class => 'control-label'
         = f.select :city_id, campaign_city_select( Campaign.first )
-        / = f.select :city_id, Street::SIZES.invert
+
   br
   
-  - if @assignment.lines.any?
+  - if @assignment.lines.any? #and not @assignment.double_street_name_creation
     = render 'lines', f: f
         
   - else

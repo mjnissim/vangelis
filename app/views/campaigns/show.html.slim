@@ -9,21 +9,13 @@ div class="page-header"
     = @campaign.comments
 
 
-h3 Covered blocks
+h3 Covered
 
-- @campaign.lines_by_city_and_street(covered: true).each do |city, streets|
-  table.table.table-striped.table-bordered
-    tr
-      td colspan="3"
-        strong= city.name
-    - streets.each do |street, numbers|
-      tr
-        td= street.name
-        td= numbers.join ", "
-        td= "#{numbers.size} blocks"          
+= render 'coverage', covered: true
 
 h3 Remaining
 
+= render 'coverage', covered: false
 
 
 .form-actions

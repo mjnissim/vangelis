@@ -14,7 +14,7 @@ table.table.table-striped
           = line_fields.text_field :line, :class => 'text_field'
       td
         p
-          = o.errors.full_messages.join " "
+          = o.errors.full_messages.to_sentence
       td
         - if o.confirmed_street_name
           = line_fields.hidden_field :confirmed_street_name, :class => 'text_field'

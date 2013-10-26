@@ -16,12 +16,20 @@ class Campaign < ActiveRecord::Base
         if covered
           streets[ street ] = covered_streets
         else # i.e. uncovered streets
-         streets[ street ] = street.all_numbers - covered_streets
+         streets[ street ] = street.numbers - covered_streets
         end
         
         by_city[ city ] = streets
       end
     end
+  end
+  
+  def entirely_uncovered_streets_by_city
+    all_streets = Street.where( city_id: city_ids ).includes( :city )
+    streets_with_lines = assignment_lines.map(&:street).uniq
+    entirely_uncovered_streets = all_streets - streets_with_lines
+    
+    entirely_uncovered_streets.group_by(&:city)
   end
   
 end
