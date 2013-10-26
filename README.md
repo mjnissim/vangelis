@@ -1,7 +1,7 @@
-vangelis
+Vangelis
 ========
 
-Gradual street blitzing made easy.
+Systematised guerilla evangelism made easy.
 
 
 * Ruby version
