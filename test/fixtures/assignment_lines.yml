@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-one:
-  assignment_id: 1
-  line: MyText
-  street_id: 1
-  numbers: MyText
-
-two:
-  assignment_id: 1
-  line: MyText
-  street_id: 1
-  numbers: MyText
+# one:
+#   assignment_id: 1
+#   line: MyText
+#   street_id: 1
+#   numbers: MyText
+# 
+# two:
+#   assignment_id: 1
+#   line: MyText
+#   street_id: 1
+#   numbers: MyText
