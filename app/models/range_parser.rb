@@ -7,20 +7,41 @@ class RangeParser
     @sort = sort
   end
   
-  def range_str= range_str
-    @range_str = range_str
-    parse
+  def range_str=( str )
+    @range_str = str
+    @parses = nil
+  end
+  
+  def section_strings
+    # Clean it up and get it ready for parsing
+    @range_str.to_s.split( "," ).reject(&:blank?)
   end
   
   def parses?
-    @parses
+    return @parses unless @parses.nil?
+    
+    # One of the sections will throw an exception if unparsable:
+    section_strings.each{ | section_str | Section.new( section_str ) }
+    
+    @parses = true
+  rescue
+    # Possibly add to an errors collection
+    @parses = false
   end
   
   def to_a
-    # Important to implement this method.
+    ar = section_strings.flat_map do | section_str |
+      Section.new( section_str ).to_a
+    end
+    
+    ar.uniq! if @uniq
+    ar.sort!{ |e1, e2| [ e1.to_i, e1 ] <=> [ e2.to_i, e2 ] } if @sort
+    ar
   end
-  
-  
+end
+
+
+class RangeParser
   class Section
     attr_reader :str
     
@@ -78,52 +99,23 @@ class RangeParser
     end
     alias :even_odd? :even_odd
     
+    def range?
+      str.include?( "-" )
+    end
+
+  private
     def validate!
       raise if range? and
         ( flat? or entrance? )
 
       raise if even_odd? and
         ( flat? or entrance? )
-    end
-
-    def range?
-      str.include?( "-" )
+        
+      raise if str.blank?
+      raise if range? and low >= high
+      raise if number.nil? and not range?
+      raise if to_a.first.to_i <= 0
     end
   end
   # end of class Section
-  
-  
-private
-  def parse
-    # Clean it up and get it ready for parsing
-    section_strings = @range_str.to_s.delete( " " ).split( "," ).reject(&:blank?)
-
-    section_strings.each do |section_str|
-      section = Section.new( section_str )
-      
-      section.check_conditions!
-            
-      if section.flat?
-        block, flat = e.split( "/" )
-        block
-        # other operations
-      elsif section.entrance?
-      elsif section.range?
-        low, high = e.split( "-" ).map(&:to_i)
-        ar = *low..high
-        even_odd ? ar.select{ |n| n.send "#{even_odd}?" } : ar
-      end
-    end
-    
-    raise if @ar.none? or @ar.include?(0)
-    
-    @ar.uniq! if @uniq
-    @ar.sort!{ |e1, e2| [ e1.to_i, e1 ] <=> [ e2.to_i, e2 ] } if @sort
-    
-    @parses = true
-  rescue
-    # Possibly add to an errors collection
-    @ar = nil
-    @parses = false
-  end
 end

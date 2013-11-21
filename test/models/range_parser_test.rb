@@ -5,11 +5,38 @@ class RangeParserTest < ActiveSupport::TestCase
     r = RangeParser::Section.new "1-5"
     assert_equal [1,2,3,4,5], r.to_a
   end
+  
+  test "Section includes zero or lower" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "0"
+    end
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "-1"
+    end
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "-3-4"
+    end
+  end
+  
+  test "Raises exception if no elements" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "10-9"
+    end
+  end
 
-  test "Throws exception for bad section" do
+  test "raises exception if no block number" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "b"
+    end
   end
 
   test "section high lower than or equal to low" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "10-10"
+    end
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "11-10"
+    end
   end
 
   test "section low" do
@@ -148,5 +175,11 @@ class RangeParserTest < ActiveSupport::TestCase
     assert_equal [1,3,5,7], r.to_a
     r = RangeParser::Section.new "1-7 even"
     assert_equal [2,4,6], r.to_a
+  end
+  
+  test "Empty section" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new ""
+    end
   end
 end
