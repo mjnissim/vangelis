@@ -36,6 +36,7 @@ class RangeParser
     
     ar.uniq! if @uniq
     ar.sort!{ |e1, e2| [ e1.to_i, e1 ] <=> [ e2.to_i, e2 ] } if @sort
+    
     ar
   end
 end
@@ -79,7 +80,9 @@ class RangeParser
     end
     
     def number_entrance_flat
-      "#{number}#{entrance}/#{flat}" if single_building?
+      if single_building?
+        "#{number}#{entrance}#{ '/' + flat.to_s if flat? }"
+      end
     end
     
     def single_building?

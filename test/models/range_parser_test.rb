@@ -24,6 +24,12 @@ class RangeParserTest < ActiveSupport::TestCase
     end
   end
 
+  test "Raises exception for empty range" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "-"
+    end
+  end
+
   test "raises exception if no building number" do
     assert_raise(RuntimeError) do
       RangeParser::Section.new "b"

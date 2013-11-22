@@ -60,6 +60,10 @@ class Street < ActiveRecord::Base
     [*1..highest_number]
   end
   
+  def reported_ranges
+    assignment_lines.map{ |al| al.numbers }.join( "," )
+  end
+  
   before_save do
     if self.name_changed?
       mp = Text::Metaphone.double_metaphone( self.name )

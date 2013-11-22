@@ -2,8 +2,6 @@ Vangelis::Application.routes.draw do
 
   devise_for :users
   
-  resources :blocks
-
   resources :cities
 
   resources :streets
