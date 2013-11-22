@@ -72,22 +72,22 @@ class RangeParser
     alias :entrance? :entrance
     
     def number
-      if single_block?
+      if single_building?
         n = str.match( /(\d+)/ ).try( :[], 1 )
         n.to_i if n
       end
     end
     
     def number_entrance_flat
-      "#{number}#{entrance}/#{flat}" if single_block?
+      "#{number}#{entrance}/#{flat}" if single_building?
     end
     
-    def single_block?
+    def single_building?
       not range?
     end
     
     def to_a
-      return [ number_entrance_flat ] if single_block?
+      return [ number_entrance_flat ] if single_building?
       
       ar = *low..high
       even_odd ? ar.select{ |n| n.send "#{even_odd}?" } : ar
@@ -114,8 +114,16 @@ class RangeParser
       raise if str.blank?
       raise if range? and low >= high
       raise if number.nil? and not range?
-      raise if to_a.first.to_i <= 0
+      raise if range? and low <= 0
+      raise if single_building? and number <= 0
     end
   end
   # end of class Section
+end
+
+
+class RangeParser
+  class Building
+  end
+  # end of class Building
 end

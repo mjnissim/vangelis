@@ -24,7 +24,7 @@ class RangeParserTest < ActiveSupport::TestCase
     end
   end
 
-  test "raises exception if no block number" do
+  test "raises exception if no building number" do
     assert_raise(RuntimeError) do
       RangeParser::Section.new "b"
     end
@@ -101,7 +101,7 @@ class RangeParserTest < ActiveSupport::TestCase
     assert r.entrance?
   end
 
-  test "section block number" do
+  test "section building number" do
     r = RangeParser::Section.new "10-15"
     assert_nil r.number
     r = RangeParser::Section.new "10b"
@@ -115,14 +115,14 @@ class RangeParserTest < ActiveSupport::TestCase
     assert_equal "10b/6", r.number_entrance_flat
   end
 
-  test "section single block?" do
+  test "section single building?" do
     r = RangeParser::Section.new "10b/6"
-    assert r.single_block?
+    assert r.single_building?
   end
 
-  test "array of section single block" do
+  test "array of section single building" do
     r = RangeParser::Section.new "10-12"
-    assert !r.single_block?
+    assert !r.single_building?
   end
 
   test "section even/odd" do
@@ -181,5 +181,10 @@ class RangeParserTest < ActiveSupport::TestCase
     assert_raise(RuntimeError) do
       RangeParser::Section.new ""
     end
+  end
+
+  test "RangeParser sort" do
+    r = RangeParser.new "1b/6, 1b/20"
+    assert_equal ["1b/6", "1b/20"], r.to_a
   end
 end
