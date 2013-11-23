@@ -61,8 +61,9 @@ class Street < ActiveRecord::Base
   end
   
   def reported_ranges
-    assignment_lines.map{ |al| al.numbers }.join( "," )
+    assignment_lines.map{ |al| al.numbers }.join( ", " )
   end
+  alias :covered_ranges :reported_ranges
   
   before_save do
     if self.name_changed?

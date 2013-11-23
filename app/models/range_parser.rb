@@ -1,9 +1,8 @@
 class RangeParser
   attr_reader :range_str
   
-  def initialize range_str, uniq: true, sort: true
+  def initialize range_str, sort: true
     self.range_str = range_str
-    @uniq = uniq
     @sort = sort
   end
   
@@ -17,27 +16,42 @@ class RangeParser
     @range_str.to_s.split( "," ).reject(&:blank?)
   end
   
+  def sections
+    section_strings.map{ | section_str | Section.new( section_str ) }
+  end
+  
   def parses?
     return @parses unless @parses.nil?
     
     # One of the sections will throw an exception if unparsable:
-    section_strings.each{ | section_str | Section.new( section_str ) }
+    sections()
     
     @parses = true
   rescue
-    # Possibly add to an errors collection
+    # Possibly add the error to an errors collection
     @parses = false
   end
   
-  def to_a
-    ar = section_strings.flat_map do | section_str |
-      Section.new( section_str ).to_a
+  def buildings
+    return @buildings if @buildings
+    
+    all_buildings = sections.flat_map(&:buildings)
+    
+    grouped = all_buildings.group_by(&:building)
+    
+    @buildings = grouped.map do |building, buildings|
+      other_covered_flats = buildings.drop( 1 ).map(&:flats)
+      buildings.first.covered_flats.concat( other_covered_flats ).sort!
+      buildings.first
     end
     
-    ar.uniq! if @uniq
-    ar.sort!{ |e1, e2| [ e1.to_i, e1 ] <=> [ e2.to_i, e2 ] } if @sort
+    if @sort
+      @buildings.sort! do |bld1, bld2|
+        [ bld1.number, bld1.entrance ] <=> [ bld2.number, bld2.entrance ]
+      end
+    end
     
-    ar
+    @buildings 
   end
 end
 
@@ -47,7 +61,7 @@ class RangeParser
     attr_reader :str
     
     def initialize str
-      @str = str.dup
+      @str = str.strip # or .dup
       validate!
     end
     
@@ -73,27 +87,33 @@ class RangeParser
     alias :entrance? :entrance
     
     def number
-      if single_building?
+      if building?
         n = str.match( /(\d+)/ ).try( :[], 1 )
         n.to_i if n
       end
     end
     
-    def number_entrance_flat
-      if single_building?
-        "#{number}#{entrance}#{ '/' + flat.to_s if flat? }"
-      end
-    end
+    # def number_entrance_flat
+    #   if building?
+    #     "#{number}#{entrance}#{ '/' + flat.to_s if flat? }"
+    #   end
+    # end
     
-    def single_building?
+    def building?
       not range?
     end
     
-    def to_a
-      return [ number_entrance_flat ] if single_building?
+    def building
+      Building.new( number, entrance, flat )
+    end
+    
+    def buildings
+      return [ building ] if building?
       
       ar = *low..high
-      even_odd ? ar.select{ |n| n.send "#{even_odd}?" } : ar
+      ar.select!{ |n| n.send "#{even_odd}?" } if even_odd?
+      
+      ar.map{ |e| Building.new( e ) }
     end
     
     # Returns "even", "odd", or nil.
@@ -118,7 +138,7 @@ class RangeParser
       raise if range? and low >= high
       raise if number.nil? and not range?
       raise if range? and low <= 0
-      raise if single_building? and number <= 0
+      raise if building? and number <= 0
     end
   end
   # end of class Section
@@ -127,6 +147,30 @@ end
 
 class RangeParser
   class Building
+    attr_reader :number, :entrance
+    
+    def initialize number, entrance = nil, flat = nil
+      @number = number.to_i
+      @entrance = entrance
+      covered_flats << flat if flat
+    end
+    
+    # Returns number of flats, or nil.
+    def flats
+      covered_flats.max if covered_flats.any?
+    end
+    
+    def covered_flats
+      @covered_flats ||= []
+    end
+    
+    def uncovered_flats
+      [*1..flats] - covered_flats if flats
+    end
+    
+    def building
+      "#{number}#{entrance}"
+    end
   end
   # end of class Building
 end

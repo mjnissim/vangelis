@@ -123,12 +123,12 @@ class RangeParserTest < ActiveSupport::TestCase
 
   test "section single building?" do
     r = RangeParser::Section.new "10b/6"
-    assert r.single_building?
+    assert r.building?
   end
 
   test "array of section single building" do
     r = RangeParser::Section.new "10-12"
-    assert !r.single_building?
+    assert !r.building?
   end
 
   test "section even/odd" do
