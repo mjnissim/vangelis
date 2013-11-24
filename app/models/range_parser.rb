@@ -171,6 +171,14 @@ class RangeParser
     def building
       "#{number}#{entrance}"
     end
+    
+    def to_s
+      "#{building} (#{covered_flats})"
+    end
+    
+    def ==(other)
+      self.to_s==other.to_s
+    end
   end
   # end of class Building
 end

@@ -60,10 +60,20 @@ class Street < ActiveRecord::Base
     [*1..highest_number]
   end
   
-  def reported_ranges
-    assignment_lines.map{ |al| al.numbers }.join( ", " )
+  def covered_ranges
+    assignment_lines.map{ |al| al.numbers }.join( "," )
   end
-  alias :covered_ranges :reported_ranges
+  
+  def reported_buildings
+    return @buildings if @buildings
+    
+    rp = RangeParser.new( covered_ranges )
+    @buildings = rp.buildings if rp.parses?
+  end
+  
+  def building building
+    reported_buildings.select{ |bld|  bld.building == building.to_s }
+  end
   
   before_save do
     if self.name_changed?

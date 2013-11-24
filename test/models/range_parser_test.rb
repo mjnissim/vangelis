@@ -3,7 +3,8 @@ require 'test_helper'
 class RangeParserTest < ActiveSupport::TestCase
   test "Regular section" do
     r = RangeParser::Section.new "1-5"
-    assert_equal [1,2,3,4,5], r.to_a
+    buildings = [1,2,3,4,5].map{ |n| RangeParser::Building.new( n ) }
+    assert_equal buildings, r.buildings
   end
   
   test "Section includes zero or lower" do
