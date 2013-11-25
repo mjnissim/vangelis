@@ -40,8 +40,9 @@ class RangeParser
     grouped = all_buildings.group_by(&:building)
     
     @buildings = grouped.map do |building, buildings|
-      other_covered_flats = buildings.drop( 1 ).map(&:flats)
-      buildings.first.covered_flats.concat( other_covered_flats ).sort!
+      other_buildings = buildings.drop( 1 )
+      other_flats = other_buildings.map(&:flats)
+      buildings.first.covered_flats.merge( other_flats )
       buildings.first
     end
     
@@ -148,6 +149,8 @@ end
 class RangeParser
   class Building
     attr_reader :number, :entrance
+    attr_accessor :all_covered
+    alias :all_covered? :all_covered
     
     def initialize number, entrance = nil, flat = nil
       @number = number.to_i
@@ -161,11 +164,17 @@ class RangeParser
     end
     
     def covered_flats
-      @covered_flats ||= []
+      @covered_flats ||= SortedSet.new
+      
+      if all_covered?
+        @covered_flats = SortedSet.new [*1..@covered_flats.max.to_i]
+      end
+      
+      @covered_flats
     end
     
     def uncovered_flats
-      [*1..flats] - covered_flats if flats
+      [*1..flats] - covered_flats.to_a if flats
     end
     
     def building
@@ -173,7 +182,7 @@ class RangeParser
     end
     
     def to_s
-      "#{building} (#{covered_flats})"
+      "#{building} (#{covered_flats.to_a})"
     end
     
     def ==(other)

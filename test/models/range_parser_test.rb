@@ -58,9 +58,11 @@ class RangeParserTest < ActiveSupport::TestCase
   
   test "even/odd section range" do
     r = RangeParser::Section.new "1-5 odd"
-    assert_equal r.to_a, [1,3,5]
+    buildings = [1,3,5].map{ |e| RangeParser::Building.new( e ) }
+    assert_equal buildings, r.buildings
     r = RangeParser::Section.new "1-5 even"
-    assert_equal r.to_a, [2,4]
+    buildings = [2,4].map{ |e| RangeParser::Building.new( e ) }
+    assert_equal buildings, r.buildings
   end
 
   test "section flat number" do
@@ -119,7 +121,8 @@ class RangeParserTest < ActiveSupport::TestCase
 
   test "get number, entrance and flat" do
     r = RangeParser::Section.new "10b/6"
-    assert_equal "10b/6", r.number_entrance_flat
+    assert_equal "10b", r.building.building
+    assert_equal 6, r.building.flats
   end
 
   test "section single building?" do
@@ -177,13 +180,6 @@ class RangeParserTest < ActiveSupport::TestCase
     end
   end
   
-  test "even odd section range array" do
-    r = RangeParser::Section.new "1-7 odd"
-    assert_equal [1,3,5,7], r.to_a
-    r = RangeParser::Section.new "1-7 even"
-    assert_equal [2,4,6], r.to_a
-  end
-  
   test "Empty section" do
     assert_raise(RuntimeError) do
       RangeParser::Section.new ""
@@ -191,7 +187,25 @@ class RangeParserTest < ActiveSupport::TestCase
   end
 
   test "RangeParser sort" do
-    r = RangeParser.new "1b/6, 1b/20"
-    assert_equal ["1b/6", "1b/20"], r.to_a
+    r = RangeParser.new "2, 10b/6, 10b/20", sort: true
+    assert_equal ["2", "10b"] , r.buildings.map(&:building)
+    assert_equal [6, 20], r.buildings.second.covered_flats.to_a
+  end
+  
+  test "Consider all flats covered if block without flats" do
+    rp = RangeParser.new "9-10, 10/6, 10/8"
+    bld = rp.buildings.second
+    bld.all_covered = true
+    assert_equal 8, bld.flats
+    assert_equal [1,2,3,4,5,6,7,8], bld.covered_flats.to_a
+  end
+  
+  test "even after adding changing to 'all_covered' it records higher numbers" do
+    rp = RangeParser.new "9-10, 10/6"
+    bld = rp.buildings.second
+    bld.all_covered = true
+    bld.covered_flats << 8
+    assert_equal 8, bld.flats
+    assert_equal [1,2,3,4,5,6,7,8], bld.covered_flats.to_a
   end
 end
