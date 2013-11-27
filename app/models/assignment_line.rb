@@ -85,7 +85,7 @@ class AssignmentLine < ActiveRecord::Base
     
     msg = "Couldn't parse the block numbers. Please double check them."
     errors.add( :base, msg )
-    return false
+    false
   end
   
   def numbers

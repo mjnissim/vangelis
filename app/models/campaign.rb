@@ -11,12 +11,13 @@ class Campaign < ActiveRecord::Base
       streets = lines.group_by(&:street)
       
       streets.each do |street, lines|
+        # covered_streets should probably be covered_buildings
         covered_streets = lines.flat_map(&:numbers_ar).uniq.sort
         
         if covered
           streets[ street ] = covered_streets
         else # i.e. uncovered streets
-         streets[ street ] = street.numbers - covered_streets
+          streets[ street ] = street.numbers - covered_streets
         end
         
         by_city[ city ] = streets
@@ -31,5 +32,4 @@ class Campaign < ActiveRecord::Base
     
     entirely_uncovered_streets.group_by(&:city)
   end
-  
 end

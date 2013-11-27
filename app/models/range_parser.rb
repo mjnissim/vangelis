@@ -41,9 +41,7 @@ class RangeParser
     
     @buildings = grouped.map do |building, buildings|
       other_buildings = buildings.drop( 1 )
-      other_flats = other_buildings.map(&:flats)
-      buildings.first.covered_flats.merge( other_flats )
-      buildings.first
+      buildings.first.merge( other_buildings )
     end
     
     if @sort
@@ -186,7 +184,12 @@ class RangeParser
     end
     
     def ==(other)
-      self.to_s==other.to_s
+      building==other.building
+    end
+    
+    def merge buildings
+      other_flats = buildings.map(&:flats)
+      covered_flats.merge other_flats and return self
     end
   end
   # end of class Building
