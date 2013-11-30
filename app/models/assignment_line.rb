@@ -91,8 +91,4 @@ class AssignmentLine < ActiveRecord::Base
   def numbers
     match.try( :[], 2 )
   end
-  
-  def numbers_ar
-    RangeParser.new( numbers ).to_a
-  end
 end

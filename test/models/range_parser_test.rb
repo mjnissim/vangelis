@@ -122,7 +122,7 @@ class RangeParserTest < ActiveSupport::TestCase
   test "get number, entrance and flat" do
     r = RangeParser::Section.new "10b/6"
     assert_equal "10b", r.building.building
-    assert_equal 6, r.building.flats
+    assert_equal 6, r.building.highest_flat
   end
 
   test "section single building?" do
@@ -196,7 +196,7 @@ class RangeParserTest < ActiveSupport::TestCase
     rp = RangeParser.new "9-10, 10/6, 10/8"
     bld = rp.buildings.second
     bld.all_covered = true
-    assert_equal 8, bld.flats
+    assert_equal 8, bld.highest_flat
     assert_equal [1,2,3,4,5,6,7,8], bld.covered_flats.to_a
   end
   
@@ -205,7 +205,21 @@ class RangeParserTest < ActiveSupport::TestCase
     bld = rp.buildings.second
     bld.all_covered = true
     bld.covered_flats << 8
-    assert_equal 8, bld.flats
+    assert_equal 8, bld.highest_flat
     assert_equal [1,2,3,4,5,6,7,8], bld.covered_flats.to_a
+  end
+  
+  test "Properly merges 'all_covered'" do
+    rp = RangeParser.new "10/6, 10, 10/3"
+    bld = rp.buildings.first
+    assert true, bld.all_covered?
+    assert_equal SortedSet.new([*1..6]), bld.covered_flats
+  end
+  
+  test "Fills gaps in building ranges" do
+    rp = RangeParser.new "5-7, 1d, 1b"
+    blds  = rp.buildings(fill_gaps: true)
+    nums = ["1a", "1b", "1c", "1d", "2", "3", "4", "5", "6", "7"]
+    assert_equal nums, blds.map(&:building)
   end
 end

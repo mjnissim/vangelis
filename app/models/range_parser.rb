@@ -32,26 +32,52 @@ class RangeParser
     @parses = false
   end
   
-  def buildings
-    return @buildings if @buildings
-    
+  def buildings fill_gaps: false
     all_buildings = sections.flat_map(&:buildings)
     
     grouped = all_buildings.group_by(&:building)
     
-    @buildings = grouped.map do |building, buildings|
+    buildings = grouped.map do |building, buildings|
       other_buildings = buildings.drop( 1 )
       buildings.first.merge( other_buildings )
     end
     
-    if @sort
-      @buildings.sort! do |bld1, bld2|
-        [ bld1.number, bld1.entrance ] <=> [ bld2.number, bld2.entrance ]
+    fill_gaps( buildings ) if fill_gaps
+
+    buildings.sort! if @sort
+    
+    buildings 
+  end
+  
+  def fill_gaps buildings
+    buildings.concat missing_buildings_by_entrances( buildings )
+    buildings.concat missing_buildings_by_numbers( buildings )
+  end
+  private :fill_gaps
+
+  def missing_buildings_by_entrances buildings
+    missing_blds = []
+    with_entrances = buildings.select{ |bld| bld.entrance? }
+    by_number = with_entrances.group_by(&:number)
+    by_number.each do |number, buildings|
+      entrances = buildings.map(&:entrance)
+      highest_entrance = entrances.max
+      missing_entrances = [*"a"..highest_entrance] - entrances
+      missing_entrances.each do |entrance|
+        missing_blds << Building.new( number, entrance )
       end
     end
-    
-    @buildings 
+    missing_blds
   end
+  # private :missing_buildings_by_entrances
+  
+  def missing_buildings_by_numbers buildings
+    existing_numbers = buildings.map(&:number)
+    all_numbers = [*1..buildings.max.number]
+    missing_numbers = all_numbers - existing_numbers
+    missing_numbers.map{ |n| Building.new( n ) }
+  end
+  private :missing_buildings_by_numbers
 end
 
 
@@ -103,7 +129,9 @@ class RangeParser
     end
     
     def building
-      Building.new( number, entrance, flat )
+      bld = Building.new( number, entrance )
+      flat ? bld.covered_flats << flat : bld.all_covered = true
+      bld
     end
     
     def buildings
@@ -150,29 +178,39 @@ class RangeParser
     attr_accessor :all_covered
     alias :all_covered? :all_covered
     
-    def initialize number, entrance = nil, flat = nil
-      @number = number.to_i
+    def initialize number, entrance = nil
+      @number = number
       @entrance = entrance
-      covered_flats << flat if flat
+      @covered_flats = SortedSet.new
+    end
+    
+    def entrance?
+      not entrance.blank?
     end
     
     # Returns number of flats, or nil.
-    def flats
-      covered_flats.max if covered_flats.any?
+    def highest_flat
+      [@highest_flat, @covered_flats.max].compact.max
+    end
+    
+    def highest_flat=( num )
+      @highest_flat = [@highest_flat, num].compact.max
     end
     
     def covered_flats
-      @covered_flats ||= SortedSet.new
-      
       if all_covered?
-        @covered_flats = SortedSet.new [*1..@covered_flats.max.to_i]
+        @covered_flats = SortedSet.new( all_flats )
       end
       
       @covered_flats
     end
     
     def uncovered_flats
-      [*1..flats] - covered_flats.to_a if flats
+      all_flats - covered_flats.to_a
+    end
+    
+    def all_flats
+      [*1..highest_flat.to_i]
     end
     
     def building
@@ -183,13 +221,19 @@ class RangeParser
       "#{building} (#{covered_flats.to_a})"
     end
     
-    def ==(other)
+    def ==( other )
       building==other.building
     end
     
+    def <=>( other )
+      [number, entrance] <=> [other.number, other.entrance]
+    end
+    
     def merge buildings
-      other_flats = buildings.map(&:flats)
-      covered_flats.merge other_flats and return self
+      other_flats = buildings.flat_map{ |bld| bld.covered_flats.to_a }
+      covered_flats.merge other_flats
+      @all_covered = buildings.select(&:all_covered).any?
+      self
     end
   end
   # end of class Building

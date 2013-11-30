@@ -48,18 +48,6 @@ class Street < ActiveRecord::Base
     streets.uniq
   end
   
-  def highest_reported_number
-    assignment_lines.map{ |l| l.numbers_ar.max}.max
-  end
-  
-  def highest_number
-    [high_number.to_i, highest_reported_number.to_i].max
-  end
-  
-  def numbers
-    [*1..highest_number]
-  end
-  
   def covered_ranges
     assignment_lines.map{ |al| al.numbers }.join( "," )
   end
@@ -69,6 +57,12 @@ class Street < ActiveRecord::Base
     
     rp = RangeParser.new( covered_ranges )
     @buildings = rp.buildings if rp.parses?
+  end
+  
+  # Returns all possible buildings, including unreported buildings.
+  def all_buildings
+    rp = RangeParser.new( covered_ranges )
+    rp.buildings fill_gaps: true
   end
   
   def building building

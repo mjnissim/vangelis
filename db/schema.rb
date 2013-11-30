@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131122214231) do
+ActiveRecord::Schema.define(version: 20131127103953) do
 
   create_table "assignment_lines", force: true do |t|
     t.integer  "assignment_id", null: false
@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 20131122214231) do
     t.string   "metaphone"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "high_number"
+    t.string   "high_building"
   end
 
   add_index "streets", ["name"], name: "index_streets_on_name", unique: true

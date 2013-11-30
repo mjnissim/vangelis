@@ -1,15 +1,15 @@
 - entirely_uncovered = @campaign.entirely_uncovered_streets_by_city
 
-- @campaign.lines_by_city_and_street(covered: covered).each do |city, streets|
+- @campaign.buildings_by_city_and_street(covered: covered).each do |city, streets|
   table.table.table-striped.table-bordered
     tr
       td colspan="3"
         strong= city.name
-    - streets.each do |street, numbers|
+    - streets.each do |street, buildings|
       tr
         td= street.name
-        td= display_numbers street, numbers
-        td= "#{numbers.size} blocks"          
+        td= display_buildings street, buildings, covered: covered
+        td= "#{buildings.size} buildings (~1,000 flats)"          
   
   - if covered == false and entirely_uncovered.include? city
     p
