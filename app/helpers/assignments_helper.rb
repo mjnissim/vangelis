@@ -9,10 +9,12 @@ module AssignmentsHelper
     <br /><br />
     Weizmann 20-40 even, 40-50 odd
     <br /><br />
-    <b>Cannot do numbers with letters or slashes, like 21/8b:</b>
+    <b>Accepts entrance numbers (in English) and flat numbers:</b>
     <br /><br />
-    Diezengof 15/8 <= not good <br />
-    Habonim 6b <= not good"
+    Diezengof 15a/8, 30b/4 <br />
+    <br />
+    Hertzl 21/8b <= not good <br />
+    Hertzl 21b/8 <= good"
     
     s.html_safe
   end
