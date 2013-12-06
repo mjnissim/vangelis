@@ -5,6 +5,7 @@ class Campaign < ActiveRecord::Base
   has_many :assignment_lines, through: :assignments, source: :lines
   
   def buildings_by_city_and_street covered: true
+    # TODO: shorten this horrendously long method!
     by_city = assignment_lines.group_by(&:city)
     
     by_city_and_street = by_city.each do |city, lines|
@@ -16,19 +17,28 @@ class Campaign < ActiveRecord::Base
         
         if covered
           by_street[ street ] = covered_blds
+          
         else
           # Get all buildings that are partially or entirely uncovered:
           
           # 1. Get all possible buildings for that street,
-          # including unreported ones:
+          #    including unreported ones:
           all_blds = street.all_buildings
           
           # 2. Subtract all fully covered_buildings:
-          uncovered_blds = all_blds.reject do |bld|
-            existing = covered_blds.find{ |cbld | cbld == bld }
+          uncovered_blds = all_blds.reject do |known_bld|
+            # First check that it exists in the covered
+            # buildings at all:
+            existing = covered_blds.find do |covered_bld |
+              covered_bld == known_bld
+            end
+            # Now check if it was specifically marked as 'all covered'
+            # or that the amount of covered flats in that building
+            # are equal to the amount of flats that that building is
+            # known to have:
             existing and
               ( existing.all_covered? or
-                existing.covered_flats.size == bld.highest_flat
+                existing.covered_flats.size == known_bld.highest_flat
               )
           end
           
@@ -40,25 +50,6 @@ class Campaign < ActiveRecord::Base
     end
   end
   
-  # def lines_by_city_and_street covered: true
-  #   by_city = assignment_lines.group_by(&:city)
-  # 
-  #   by_city_and_street = by_city.each do |city, lines|
-  #     streets = lines.group_by(&:street)
-  #     
-  #     streets.each do |street, lines|
-  #       covered_buildings = lines.flat_map(&:numbers_ar).uniq.sort
-  #       
-  #       if covered
-  #         streets[ street ] = covered_buildings
-  #       else # i.e. uncovered streets
-  #         streets[ street ] = street.numbers - covered_buildings
-  #       end
-  #       
-  #       by_city[ city ] = streets
-  #     end
-  #   end
-  # end
   
   def entirely_uncovered_streets_by_city
     all_streets = Street.where( city_id: city_ids ).includes( :city )

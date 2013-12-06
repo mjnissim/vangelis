@@ -1,17 +1,12 @@
 class Street < ActiveRecord::Base
   
-  # SIZES = {SMALL=0 => 'Small', MEDIUM=1 => 'Medium', LARGE=2 => 'Large'}
-  
   belongs_to :city
   has_many :assignment_lines
   
   serialize :other_spellings, Set
   serialize :metaphone, Array
   
-  # def moshe
-  #   SIZES[MEDIUM]
-  # end
-  
+
   def self.find_by_name name, city
     street = city.streets.where( 'lower(name) = ?', name.downcase ).first
     return street if street.present?
@@ -23,7 +18,7 @@ class Street < ActiveRecord::Base
   
   def self.search_similar name, city
     ( search_by_sound( name, city ) +
-      drop_or_add_the( name, city )  ).uniq
+      drop_or_add_prefixes( name, city )  ).uniq
   end
   
   def self.search_by_sound name, city
@@ -35,12 +30,12 @@ class Street < ActiveRecord::Base
   
   # "Ha" is the Hebrew equivalent to "The". Dropping "Ha"
   # from names, or adding it, can help with finding streets.
-  def self.drop_or_add_the name, city
+  def self.drop_or_add_prefixes name, city
     # also treats "he" for names like "HeCharuv"
     name = name.downcase
-    drop_the = name.sub( /(ha|he)\'?/, "" )
-    add_the = ["ha", "he", "ha'", "he'"].map{ |h| h + name }
-    variations = add_the + [drop_the]
+    drop_prefix = name.sub( /(ha|he)\'?/, "" )
+    add_prefix = ["ha", "he", "ha'", "he'"].map{ |h| h + name }
+    variations = add_prefix + [drop_prefix]
     
     streets = variations.flat_map do |variation|
       search_by_sound variation, city
