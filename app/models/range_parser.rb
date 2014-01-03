@@ -226,7 +226,7 @@ class RangeParser
     end
     
     def <=>( other )
-      [number, entrance] <=> [other.number, other.entrance]
+      [number, entrance.to_s] <=> [other.number, other.entrance.to_s]
     end
     
     def merge buildings

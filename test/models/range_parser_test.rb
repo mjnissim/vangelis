@@ -222,4 +222,11 @@ class RangeParserTest < ActiveSupport::TestCase
     nums = ["1a", "1b", "1c", "1d", "2", "3", "4", "5", "6", "7"]
     assert_equal nums, blds.map(&:building)
   end
+  
+  test "Accepts entrance and non-entrance together" do
+    rp = RangeParser.new "87/9, 87a/6"
+    blds  = rp.buildings
+    nums = ["87", "87a"]
+    assert_equal nums, blds.map(&:building)
+  end
 end

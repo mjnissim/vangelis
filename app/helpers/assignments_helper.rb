@@ -1,5 +1,5 @@
 module AssignmentsHelper
-  def report_placeholder_text
+  def assignment_help_text
     s = "<b>Put each street and its block numbers on a new line:</b>
     <br /><br />
     Hertzl 45, 46, 50-58 <br />
