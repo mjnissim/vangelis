@@ -38,7 +38,7 @@ class Campaign < ActiveRecord::Base
             # known to have:
             existing and
               ( existing.all_covered? or
-                existing.covered_flats.size == known_bld.highest_flat
+                existing.covered_flats.size == known_bld.highest_flat.to_i
               )
           end
           
