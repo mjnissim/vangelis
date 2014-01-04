@@ -13,7 +13,7 @@ class RangeParser
   
   def section_strings
     # Clean it up and get it ready for parsing
-    @range_str.to_s.split( /[, ]/ ).reject(&:blank?)
+    @range_str.to_s.split( "," ).reject(&:blank?)
   end
   
   def sections
@@ -155,17 +155,23 @@ class RangeParser
 
   private
     def validate!
-      raise if range? and
-        ( flat? or entrance? )
-
-      raise if even_odd? and
-        ( flat? or entrance? )
-        
-      raise if str.blank?
-      raise if range? and low >= high
-      raise if number.nil? and not range?
-      raise if range? and low <= 0
-      raise if building? and number <= 0
+      case
+      when ( range? and ( flat? or entrance? ) )
+        raise "Cannot combine range with flat or entrance (#{ @str })"
+      when ( even_odd? and ( flat? or entrance? ) )
+        raise "Cannot combine even/odd with flat or entrance (#{ @str })"
+      when ( range? and low >= high )
+        raise "Range should go from low to high number (#{ @str })"
+      when ( number.nil? and not range? )
+        raise "No building number (#{ @str })"
+      when ( range? and low <= 0 )
+        raise "Cannot have numbers lower than 1 in range (#{ @str })"
+      when ( building? and number <= 0 )
+        raise "Cannot have numbers lower than 1 (#{ @str })"
+      when @str.blank?
+        raise ( "Blank string (#{ @str })" )
+      end
+      # parses "a/7" "/7"
     end
   end
   # end of class Section
