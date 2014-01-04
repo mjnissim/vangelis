@@ -1,5 +1,5 @@
 class RangeParser
-  attr_reader :range_str
+  attr_reader :range_str, :last_error
   
   def initialize range_str, sort: true
     self.range_str = range_str
@@ -9,6 +9,8 @@ class RangeParser
   def range_str=( str )
     @range_str = str
     @parses = nil
+    @last_error = nil
+    parses?
   end
   
   def section_strings
@@ -27,8 +29,8 @@ class RangeParser
     sections()
     
     @parses = true
-  rescue
-    # Possibly add the error to an errors collection
+  rescue => e
+    @last_error = e.message
     @parses = false
   end
   

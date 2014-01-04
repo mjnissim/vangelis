@@ -83,8 +83,7 @@ class AssignmentLine < ActiveRecord::Base
     rp = RangeParser.new( numbers )
     return true if rp.parses?
     
-    msg = "Couldn't parse the block numbers. Please double check them."
-    errors.add( :base, msg )
+    errors.add( :base, rp.last_error )
     false
   end
   
