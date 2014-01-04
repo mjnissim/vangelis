@@ -13,7 +13,7 @@ class RangeParser
   
   def section_strings
     # Clean it up and get it ready for parsing
-    @range_str.to_s.split( "," ).reject(&:blank?)
+    @range_str.to_s.split( /[, ]/ ).reject(&:blank?)
   end
   
   def sections
