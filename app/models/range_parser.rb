@@ -120,8 +120,9 @@ class RangeParser
     
     def number
       if building?
-        n = str.match( /(\d+)/ ).try( :[], 1 )
-        n.to_i if n
+        # n = str.match( /(\d+)/ ).try( :[], 1 )
+        n = str.split("/").first.to_i
+        n unless n.zero?
       end
     end
     
@@ -178,7 +179,6 @@ class RangeParser
       when @str.blank?
         raise ( "Blank string (#{ @str })" )
       end
-      # parses "a/7" "/7"
     end
   end
   # end of class Section

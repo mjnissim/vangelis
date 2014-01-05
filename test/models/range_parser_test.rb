@@ -19,6 +19,15 @@ class RangeParserTest < ActiveSupport::TestCase
     end
   end
   
+  test "Raises exception on no building number" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "a/7"
+    end
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "/7"
+    end
+  end
+  
   test "Raises exception if no elements" do
     assert_raise(RuntimeError) do
       RangeParser::Section.new "10-9"
@@ -231,8 +240,8 @@ class RangeParserTest < ActiveSupport::TestCase
   end
   
   test "No comma between buildings is also parsable" do
-    rp = RangeParser.new "101, 111b/9 111a/6 1-10 even 10-20 odd"
+    rp = RangeParser.new "101, 111b/9 111a/6 1-5 even 10-15 odd"
     ar = ["2", "4", "11", "13", "15", "101", "111a", "111b"]
-    assert_equal ar, rp.buildings.map &:building
+    assert_equal ar, rp.buildings.map(&:building)
   end
 end
