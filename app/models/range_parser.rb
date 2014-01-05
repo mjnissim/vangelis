@@ -120,7 +120,6 @@ class RangeParser
     
     def number
       if building?
-        # n = str.match( /(\d+)/ ).try( :[], 1 )
         n = str.split("/").first.to_i
         n unless n.zero?
       end
@@ -177,7 +176,12 @@ class RangeParser
       when ( building? and number <= 0 )
         raise "Cannot have numbers lower than 1 (#{ @str })"
       when @str.blank?
-        raise ( "Blank string (#{ @str })" )
+        raise "Blank string (#{ @str })"
+      when @str.split( " " ).size > 2
+        raise "Malformed (#{ @str })"
+      when (@str.split( " " ).many? and
+         not @str.split( " " )[1].match( /(even|odd)/i ) )
+        raise "Unnecessary spaces (#{ @str })"
       end
     end
   end

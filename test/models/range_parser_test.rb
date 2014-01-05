@@ -28,6 +28,12 @@ class RangeParserTest < ActiveSupport::TestCase
     end
   end
   
+  test "Raises exception on no bad section" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "1a/7 a/7"
+    end
+  end
+  
   test "Raises exception if no elements" do
     assert_raise(RuntimeError) do
       RangeParser::Section.new "10-9"
