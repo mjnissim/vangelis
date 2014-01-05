@@ -7,15 +7,22 @@ class RangeParser
   end
   
   def range_str=( str )
-    @range_str = str
+    @range_str = str.to_s.dup
     @parses = nil
     @last_error = nil
     parses?
   end
   
+  # Clean the string up and get it ready for parsing.
   def section_strings
-    # Clean it up and get it ready for parsing
-    @range_str.to_s.split( "," ).reject(&:blank?)
+    # Insert commas before whitespace-digit sequences
+    # Makes things that look like this:
+    # "1 2/3a 3-5 even 6 4-7 odd 8"
+    # To look like this:
+    # "1, 2, 3-5 even, 6, 4-7 odd, 8"
+    @range_str.gsub! /(?<seq>\s\d)/i, ',\k<seq>'
+    
+    @range_str.split( "," ).reject(&:blank?)
   end
   
   def sections
@@ -101,15 +108,13 @@ class RangeParser
     end
     
     def flat
-      n = str.split( "/" )[1]
-      n.to_i if n
+      n = str.split( "/" )[1].to_i
+      n unless n.zero?
     end
     alias :flat? :flat
     
     def entrance
-      # unless even_odd?
-        str.match( /\d+([a-zA-Z])/ ).try(:[],1).try(:downcase)
-      # end
+      str.match( /\d+([a-zA-Z])/ ).try(:[],1).try(:downcase)
     end
     alias :entrance? :entrance
     

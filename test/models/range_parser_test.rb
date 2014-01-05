@@ -230,8 +230,9 @@ class RangeParserTest < ActiveSupport::TestCase
     assert_equal nums, blds.map(&:building)
   end
   
-  # test "No comma between buildings is also parsable" do
-  #   rp = RangeParser.new "101, 111b/9 111a/6"
-  #   assert_equal 3, rp.buildings.size
-  # end
+  test "No comma between buildings is also parsable" do
+    rp = RangeParser.new "101, 111b/9 111a/6 1-10 even 10-20 odd"
+    ar = ["2", "4", "11", "13", "15", "101", "111a", "111b"]
+    assert_equal ar, rp.buildings.map &:building
+  end
 end
