@@ -7,7 +7,7 @@ class RangeParser
   end
   
   def range_str=( str )
-    @range_str = str.to_s.dup
+    @range_str = str.strip.dup
     @parses = nil
     @last_error = nil
     parses?
@@ -179,9 +179,15 @@ class RangeParser
         raise "Blank string (#{ @str })"
       when @str.split( " " ).size > 2
         raise "Malformed (#{ @str })"
-      when (@str.split( " " ).many? and
+      when ( @str.split( " " ).many? and
          not @str.split( " " )[1].match( /(even|odd)/i ) )
         raise "Unnecessary spaces (#{ @str })"
+      when ( building? and not @str.match( /^\b*\d+(?:[a-z])?(\/\d+)?\b*$/i ) )
+        # See it in action: http://rubular.com/r/mF630y9fzeend
+        raise "Malformed building (#{ @str })"
+      when ( range? and not @str.match( /^\b*\d+-\d+\b*(?:\s*(even|odd))?$/i ) )
+        # See it in action: http://rubular.com/r/KHmnVsnaXq
+        raise "Malformed range (#{ @str })"
       end
     end
   end

@@ -83,14 +83,14 @@ class RangeParserTest < ActiveSupport::TestCase
   test "section flat number" do
     r = RangeParser::Section.new "10/3"
     assert_equal 3, r.flat
-    r = RangeParser::Section.new "10/3a"
+    r = RangeParser::Section.new "10a/3"
     assert_equal 3, r.flat
   end
 
   test "section has flat" do
     r = RangeParser::Section.new "10/3"
     assert r.flat?
-    r = RangeParser::Section.new "10/3a"
+    r = RangeParser::Section.new "10a/3"
     assert r.flat?
   end
 
@@ -198,6 +198,15 @@ class RangeParserTest < ActiveSupport::TestCase
   test "Empty section" do
     assert_raise(RuntimeError) do
       RangeParser::Section.new ""
+    end
+  end
+
+  test "Raises on malformed sections" do
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "1a/7a/7"
+    end
+    assert_raise(RuntimeError) do
+      RangeParser::Section.new "10/3a"
     end
   end
 
