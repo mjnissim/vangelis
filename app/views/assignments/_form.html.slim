@@ -1,5 +1,6 @@
 = form_for @assignment do |f|
-  = f.hidden_field :user_id, value: current_user.id, :class => 'text_field'
+  = f.hidden_field :user_id, value: current_user.id
+  = f.hidden_field :status
   table
     tr
       td

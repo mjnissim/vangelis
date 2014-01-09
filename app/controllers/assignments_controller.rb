@@ -15,7 +15,7 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/new
   def new
-    @assignment = Assignment.new
+    @assignment = Assignment.new(assignment_params)
   end
 
   # GET /assignments/1/edit
