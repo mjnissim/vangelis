@@ -7,9 +7,9 @@ module ApplicationHelper
     Campaign.all.map{ |c| [ c.name, c.id ] }
   end
   
-  def natural_lang_for date
-    "#{ Kronic.format( date ) } #{ date.strftime( '%H:%M' ) }"
-  end
+  # def natural_lang_for date
+  #   "#{ Kronic.format( date ) } #{ date.strftime( '%H:%M' ) }"
+  # end
   
   def similar_street_select line
       ar = line.similar_streets.map{ |street|
@@ -29,8 +29,8 @@ module ApplicationHelper
 
   def nice_datetime date
     return "" if date.blank?
-    return date.strftime( "%H:%M" ) if date.today?
-    return "Yesterday #{date.strftime( '%H:%M' )}" if date.to_date == 1.days.ago.to_date
+    return date.strftime( "Today %H:%M" ) if date.today?
+    return date.strftime( 'Yesterday %H:%M' ) if date.to_date == 1.days.ago.to_date
     return date.strftime( "%-d %b %H:%M" ) if date.to_date >= 1.month.ago.to_date
     return date.strftime( "%-d %b" ) if date.year == Date.today.year
     date.strftime( "%-d/%m/%Y" )
