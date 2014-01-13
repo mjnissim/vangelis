@@ -51,12 +51,24 @@ class Campaign < ActiveRecord::Base
     end
   end
   
-  
   def entirely_uncovered_streets_by_city
     all_streets = Street.where( city_id: city_ids ).includes( :city )
     streets_with_lines = assignment_lines.map(&:street).uniq
     entirely_uncovered_streets = all_streets - streets_with_lines
     
     entirely_uncovered_streets.group_by(&:city)
+  end
+  
+  def generate_assignments_for street, amount, residences_each
+    residences = amount * residences_each
+    resid_ar = uncovered_flats_for( street, residences )
+    resid_ar.shuffle!
+    resid_ar = resid_ar.in_groups_of(residences_each, false)
+    resid_ar.map{ |grp| grp.sort }
+  end
+  
+  def uncovered_flats_for street, amount
+    # Next line has to go by campaign, of course.
+    street.reported_buildings.first amount
   end
 end
