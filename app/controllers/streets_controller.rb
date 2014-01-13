@@ -61,6 +61,25 @@ class StreetsController < ApplicationController
       format.json { head :no_content }
     end
   end
+  
+  def set_high_building
+    respond_to do |format|
+      if @street.update_attributes( high_building: params[:number] )
+        if params[:campaign_id]
+          @campaign = Campaign.find( params[:campaign_id] )
+          notice = "#{@street.name} high number is now #{@street.high_building}"
+          format.html { redirect_to @campaign, notice: notice }
+        else
+          format.html { redirect_to @street, notice: 'Street was successfully updated.' }
+        end
+        format.json { head :no_content }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit' }
+        format.json { render json: @street.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

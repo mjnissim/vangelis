@@ -10,6 +10,7 @@ class Campaign < ActiveRecord::Base
     
     by_city_and_street = by_city.each do |city, lines|
       by_street = lines.group_by(&:street)
+      by_street = Hash[by_street.sort{ |a, b| a.first.name <=> b.first.name }]
       
       by_street.each do |street, lines|
         covered_range = lines.flat_map(&:numbers).join( "," )

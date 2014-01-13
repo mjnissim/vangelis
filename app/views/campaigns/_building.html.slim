@@ -1,0 +1,18 @@
+- if needs_link_to_confirm_high_number?( street, building )
+  = link_to building.building,
+    { controller: :streets, action: :set_high_building,
+    id: street.id, number: building.building, campaign_id: @campaign.id},
+    method: :patch, confirm: "Are you sure you would like to change #{street.name} high number to #{building.building}?"
+- elsif building == street.all_buildings.last
+  strong
+    = building.building
+- else
+  = building.building
+
+- if covered
+  = " (partial)" if building.covered_flats.any?
+- elsif building.uncovered_flats.any?
+  = " (fl. #{building.uncovered_flats.join(', ')})"
+
+- unless building == buildings.last
+  ',

@@ -56,8 +56,10 @@ class Street < ActiveRecord::Base
   
   # Returns all possible buildings, including unreported buildings.
   def all_buildings
-    rp = RangeParser.new( covered_ranges )
-    rp.buildings fill_gaps: true
+    return @all_buildings if @all_buildings
+    
+    @all_buildings = RangeParser.new( covered_ranges )
+    @all_buildings = @all_buildings.buildings( fill_gaps: true )
   end
   
   def building building
