@@ -15,7 +15,7 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/new
   def new
-    @assignment = Assignment.new(assignment_params)
+    @assignment = Assignment.new
   end
 
   # GET /assignments/1/edit
@@ -62,6 +62,11 @@ class AssignmentsController < ApplicationController
       format.html { redirect_to assignments_url }
       format.json { head :no_content }
     end
+  end
+  
+  def report
+    @assignment = Assignment.new( status: Assignment::STATUSES[:completed] )
+    render :new
   end
 
   private

@@ -12,7 +12,10 @@ Vangelis::Application.routes.draw do
 
   resources :campaigns
 
-  resources :assignments
+  resources :assignments do
+    get :generate,  on: :new
+    get :report,    on: :new
+  end
 
   resources :assignment_lines
 
