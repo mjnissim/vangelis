@@ -241,7 +241,7 @@ class RangeParser
     end
     
     def to_s
-      "#{building} (#{covered_flats.to_a})"
+      "#{building} (#{covered_flats.to_a.join(', ')})"
     end
     
     def ==( other )
@@ -249,7 +249,11 @@ class RangeParser
     end
     
     def <=>( other )
-      [number, entrance.to_s] <=> [other.number, other.entrance.to_s]
+      a = [number, entrance.to_s]
+      a << covered_flats.first.to_i
+      b = [other.number, other.entrance.to_s]
+      b << other.covered_flats.first.to_i
+      a <=> b 
     end
     
     def merge buildings
