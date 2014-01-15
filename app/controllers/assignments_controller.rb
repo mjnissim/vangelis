@@ -68,6 +68,13 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new( status: Assignment::STATUSES[:completed] )
     render :new
   end
+  
+  def generate
+    if request.method == 'POST'
+      # @assignment = Assignment.create( status: Assignment::STATUSES[:assigned] )
+      redirect_to assignments_url, notice: 'Assignments generated successfully.'
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

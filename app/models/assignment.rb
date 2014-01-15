@@ -7,7 +7,7 @@ class Assignment < ActiveRecord::Base
   
   # SUGGESTION: MARK BLOCKS THAT ARE BEING BUILT, FOR A FUTURE VISIT.
   
-  STATUSES = {completed: 'COMPLETED'}
+  STATUSES = { completed: 'COMPLETED', assigned: 'ASSIGNED' }
   
   accepts_nested_attributes_for :lines, allow_destroy: true, 
     reject_if: proc { |attributes|

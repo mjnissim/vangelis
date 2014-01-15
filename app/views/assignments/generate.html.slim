@@ -1,0 +1,9 @@
+div class="page-header"
+  h1= "Generate Assignment"
+  
+= form_tag generate_assignments_url do
+  .form-actions
+    = submit_tag nil, :class => 'btn btn-primary'
+    '
+    = link_to t('.cancel', :default => t("helpers.links.cancel")), assignments_path, :class => 'btn'
+  
