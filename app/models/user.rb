@@ -4,4 +4,6 @@ class User < ActiveRecord::Base
   # :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+  belongs_to :current_campaign, foreign_key: :current_campaign_id,
+          class_name: 'Campaign'
 end

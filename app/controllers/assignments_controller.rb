@@ -71,8 +71,8 @@ class AssignmentsController < ApplicationController
   
   def generate
     if request.method == 'POST'
-      # @assignment = Assignment.create( status: Assignment::STATUSES[:assigned] )
-      redirect_to assignments_url, notice: 'Assignments generated successfully.'
+      notice = 'Assignments generated successfully.'
+      redirect_to( assignments_url, notice: notice ) if auto_generate
     end
   end
 
@@ -90,5 +90,29 @@ class AssignmentsController < ApplicationController
           :line, :confirmed_street_name
         ]
       )
+    end
+    
+    def auto_generate
+      street = Street.find( params[:street_id] )
+      
+      ag = AssignmentGenerator.new( current_campaign, street,
+        params[:amount], params[:residences_each] )
+      groups = ag.generate
+      residences_to_assignments street, groups
+    end
+    
+    def residences_to_assignments street, residence_groups
+      @assignments = residence_groups.map do |grp|
+        residence_to_assignment street, grp
+      end
+      @assignments.all?(&:save)
+    end
+    
+    def residence_to_assignment street, grp
+      report = "#{ street.name } #{grp.map{ |b| b.building + '/' +
+        b.covered_flats.first.to_s }.join( ', ' ) }"
+      puts report
+      current_campaign.assignments.build( user: current_user, report: report,
+        status: Assignment::STATUSES[:assigned], city: street.city)
     end
 end

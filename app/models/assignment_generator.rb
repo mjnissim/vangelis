@@ -1,7 +1,7 @@
 class AssignmentGenerator
   def initialize campaign, street, amount, residences_each
     @campaign, @street, @amount, @residences_each =
-      campaign, street, amount, residences_each
+      campaign, street, amount.to_i, residences_each.to_i
     @residences = uncovered_flats
   end
   
