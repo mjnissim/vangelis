@@ -7,10 +7,22 @@ class AssignmentGenerator
   
   def generate
     smart_shuffle
-    limit
     set_in_groups
     internally_sort_groups
-    @residences
+    @groups
+  end
+  
+  def smart_shuffle
+    separate_non_flats
+    sort_by_largest_chunk
+    transpose_by_largest_chunk
+    @residences = @flats + @non_flats
+  end
+  
+  def largest_chunk
+    return @largest_chunk if @largest_chunk
+    @largest_chunk = grouped_by_building.map(&:size).max
+    @largest_chunk ||= 1
   end
   
   def amount_of_residences
@@ -28,38 +40,42 @@ class AssignmentGenerator
     blds[@street.city][@street]
   end
   
+  def grouped_by_building
+    @flats.group_by(&:building).values
+  end
+  
   
   private
   
-  def new_buildings_for_flats flats, bld
-    return bld if flats.none?
-    flats.map{ |flat| new_building_for flat, bld }
-  end
+    def new_buildings_for_flats flats, bld
+      return bld if flats.none?
+      flats.map{ |flat| new_building_for flat, bld }
+    end
   
-  def new_building_for flat, bld
-    b = RangeParser::Building.new( bld.number, bld.entrance )
-    b.covered_flats<<flat
-    b
-  end
+    def new_building_for flat, bld
+      b = RangeParser::Building.new( bld.number, bld.entrance )
+      b.covered_flats<<flat
+      b
+    end
   
-  # Devides all residences to two arrays, setting buildings without flats
-  # at the end. Then it internally shuffles each array and joins them.
-  # This produces a relatively random order while giving buildings with
-  # flats the preferance
-  def smart_shuffle
-    @residences = @residences.partition{ |bld| bld.covered_flats.any? }
-    @residences.each(&:shuffle!).flatten!
-  end
+    def sort_by_largest_chunk
+      @flats = grouped_by_building.sort{ |a,b| b.size <=> a.size }.flatten
+    end
   
-  def limit
-    @residences = @residences.first( amount_of_residences )
-  end
-  
-  def internally_sort_groups
-    @residences.each{ |grp| grp.sort! }
-  end
-  
-  def set_in_groups
-    @residences = @residences.in_groups_of( @residences_each, false )
-  end
+    def transpose_by_largest_chunk
+      @flats = @flats.in_groups_of( largest_chunk )
+      @flats = @flats.transpose.flatten.compact
+    end
+    
+    def separate_non_flats
+      @flats, @non_flats = @residences.partition{ |b| b.covered_flats.any? }
+    end
+    
+    def internally_sort_groups
+      @groups.each &:sort!
+    end
+    
+    def set_in_groups
+      @groups = @residences.in_groups_of( @residences_each ).first( @amount )
+    end
 end
