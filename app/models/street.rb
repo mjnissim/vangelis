@@ -1,5 +1,6 @@
 class Street < ActiveRecord::Base
-  
+
+  default_scope { order( :name ) }
   belongs_to :city
   has_many :assignment_lines
   

@@ -23,4 +23,31 @@ module AssignmentsHelper
     link_to "#{assignment.campaign.name} (#{assignment.city.name})",
       assignment.campaign
   end
+  
+  def status_color assignment
+    case
+    when assignment.assigned?
+      "text-warning"
+    when assignment.completed?
+      "text-success"
+    end
+  end
+  
+  def streets_for assignment
+    street_names = assignment.streets.map(&:name)
+    s = street_names.to_sentence
+    s = assignment.lines.first.line if assignment.lines.one?
+    link_to s.truncate(40), assignment_url( assignment )
+  end
+  
+  def complete_assignment assignment
+    link_to "#{assignment.name} ✓", assignment_url(assignment, assignment: { status: Assignment::STATUSES[:completed]}), method: :patch,
+      :class => "btn btn-mini btn-success btn-block",
+      data: { confirm: "Was #{assignment.name} completed accurately?" }
+  end
+  
+  def operative assignment
+    email = assignment.assigned_to.try(:email) || assignment.user.email
+    email.truncate(15)
+  end
 end

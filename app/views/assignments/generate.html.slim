@@ -1,10 +1,24 @@
 div class="page-header"
-  h1= "Generate Assignment"
+  h1= "Auto Generate Assignment"
   
 = form_tag generate_assignments_url do
-  = text_field_tag :street_id, Street.first.id
-  = text_field_tag :amount, 4
-  = text_field_tag :residences_each, 3
+
+  = label_tag :street, "Please select street:"
+  = select_tag :street_id,
+    option_groups_from_collection_for_select(current_campaign.cities,
+    :streets, :name, :id, :name)
+
+  = label_tag :amount, "How many assignment to generate?"
+  = text_field_tag :amount, 1
+  
+  = label_tag :residences_each, "How many residences in each assignment?"
+  = text_field_tag :residences_each, 4
+  
+  = label_tag :assigned_to, "Assign to:"
+  = select_tag :assigned_to,
+    options_from_collection_for_select(User.all,
+    :id, :email)
+  
   .form-actions
     = submit_tag nil, :class => 'btn btn-primary'
     '

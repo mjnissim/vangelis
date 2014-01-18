@@ -4,6 +4,8 @@ class Assignment < ActiveRecord::Base
   belongs_to :city
   belongs_to :user
   belongs_to :campaign
+  has_many :streets, through: :lines
+  belongs_to :assigned_to, class_name: 'User', foreign_key: :assignee_id
   
   # SUGGESTION: MARK BLOCKS THAT ARE BEING BUILT, FOR A FUTURE VISIT.
   
@@ -41,6 +43,14 @@ class Assignment < ActiveRecord::Base
             two different lines. Please combine them."
       self.errors.add(:base, msg)
     end
+  end
+  
+  def assigned?
+    status == STATUSES[:assigned]
+  end
+  
+  def completed?
+    status == STATUSES[:completed]
   end
   
   before_save do |assignment|

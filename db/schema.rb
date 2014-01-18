@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140116145224) do
+ActiveRecord::Schema.define(version: 20140118150642) do
 
   create_table "assignment_lines", force: true do |t|
     t.integer   "assignment_id", null: false
@@ -23,14 +23,16 @@ ActiveRecord::Schema.define(version: 20140116145224) do
   end
 
   create_table "assignments", force: true do |t|
-    t.integer   "user_id",     null: false
-    t.integer   "campaign_id", null: false
-    t.timestamp "date"
-    t.string    "status"
-    t.integer   "city_id",     null: false
-    t.text      "comments"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
+    t.integer  "user_id",     null: false
+    t.integer  "campaign_id", null: false
+    t.datetime "date"
+    t.string   "status"
+    t.integer  "city_id",     null: false
+    t.text     "comments"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.integer  "assignee_id"
   end
 
   create_table "campaigns", force: true do |t|

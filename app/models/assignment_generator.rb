@@ -16,7 +16,7 @@ class AssignmentGenerator
     separate_non_flats
     sort_by_largest_chunk
     transpose_by_largest_chunk
-    @residences = @flats + @non_flats
+    recombine_non_flats
   end
   
   def largest_chunk
@@ -77,5 +77,9 @@ class AssignmentGenerator
     
     def set_in_groups
       @groups = @residences.in_groups_of( @residences_each ).first( @amount )
+    end
+    
+    def recombine_non_flats
+      @residences = @flats + @non_flats
     end
 end

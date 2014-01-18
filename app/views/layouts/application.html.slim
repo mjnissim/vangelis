@@ -39,12 +39,16 @@ html lang="en"
       .row
         .span2
           .well.sidebar-nav
-            h3 Sidebar
+            / h3 Sidebar
             ul.nav.nav-list
-              li.nav-header Sidebar
+              li.nav-header Links
               li= link_to "Assignments", assignments_path
               li= link_to "Campaigns", campaigns_path
-              li= link_to "Link 3", "/path3"
+              li.divider
+            ul.nav.nav-list
+              li.nav-header Current Campaign
+              - if current_campaign
+                li= link_to "#{current_campaign.name}", campaign_url(current_campaign)
         .span10
           = bootstrap_flash
           = yield

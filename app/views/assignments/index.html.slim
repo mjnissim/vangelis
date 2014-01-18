@@ -5,28 +5,32 @@ div class="page-header"
 = render 'assignments_toolbar'
 p
 
-table class="table table-striped"
+table class="table table-striped table-hover"
   thead
     tr
-      th= model_class.human_attribute_name(:id)
+      th  ID
       th= model_class.human_attribute_name(:date)
-      th= model_class.human_attribute_name(:user_id)
-      th Campaign
+      th  Where
+      th  Operative
       th= model_class.human_attribute_name(:status)
       th= model_class.human_attribute_name(:comments)
+      th
       th
   tbody
     - @assignments.each do |assignment|
       tr
         td= link_to assignment.id, assignment_path(assignment)
         td= nice_datetime( assignment.date )
-        td= assignment.user.email
-        td= link_to_assignment_campaign assignment
-        td.text-success= assignment.status
+        td= streets_for assignment
+        td= operative assignment
+        td class=status_color( assignment )
+          = assignment.status
         td= assignment.comments
         td
+          - if assignment.assigned?
+            = complete_assignment assignment
+        td
           / = link_to t('.edit', :default => t("helpers.links.edit")), edit_assignment_path(assignment), :class => 'btn btn-mini'
-          '
           = link_to t('.destroy', :default => t("helpers.links.destroy")), assignment_path(assignment), :method => :delete, :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) }, :class => 'btn btn-mini btn-danger'
 
 = render 'assignments_toolbar'

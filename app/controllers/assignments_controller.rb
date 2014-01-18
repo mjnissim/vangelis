@@ -5,7 +5,7 @@ class AssignmentsController < ApplicationController
   # GET /assignments
   # GET /assignments.json
   def index
-    @assignments = Assignment.all.order(id: :desc)
+    @assignments = current_campaign.assignments.order(id: :desc)
   end
 
   # GET /assignments/1
@@ -28,7 +28,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new(assignment_params)
     respond_to do |format|
       if @assignment.save
-        format.html { redirect_to @assignment, notice: 'Assignment was successfully created.' }
+        format.html { redirect_to assignments_path, notice: 'Assignment was successfully created.' }
         format.json { render action: 'show', status: :created, location: @assignment }
       else
         [:"lines.base", :lines].each{|key| @assignment.errors.delete(key) }
@@ -45,7 +45,7 @@ class AssignmentsController < ApplicationController
   def update
     respond_to do |format|
       if @assignment.update(assignment_params)
-        format.html { redirect_to @assignment, notice: 'Assignment was successfully updated.' }
+        format.html { redirect_to assignments_path, notice: 'Assignment was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -72,7 +72,12 @@ class AssignmentsController < ApplicationController
   def generate
     if request.method == 'POST'
       notice = 'Assignments generated successfully.'
-      redirect_to( assignments_url, notice: notice ) if auto_generate
+      if auto_generate
+        redirect_to( assignments_url, notice: notice )
+      # else
+      #   flash.now[:error] = @assignment.errors.full_messages
+      #   render :generate
+      end
     end
   end
 
@@ -98,6 +103,7 @@ class AssignmentsController < ApplicationController
       ag = AssignmentGenerator.new( current_campaign, street,
         params[:amount], params[:residences_each] )
       groups = ag.generate
+      
       residences_to_assignments street, groups
     end
     
@@ -109,10 +115,16 @@ class AssignmentsController < ApplicationController
     end
     
     def residence_to_assignment street, grp
-      report = "#{ street.name } #{grp.map{ |b| b.building + '/' +
-        b.covered_flats.first.to_s }.join( ', ' ) }"
-      puts report
+      buildings = grp.map do |bld| 
+        s = bld.building 
+        s << "/#{bld.covered_flats.first}" if bld.covered_flats.any?
+        s
+      end
+      report = "#{ street.name } #{buildings.join(", ")}"
+      puts "REPORT REPORT #{report}"
+      name = NameGenerator.new.generate
       current_campaign.assignments.build( user: current_user, report: report,
-        status: Assignment::STATUSES[:assigned], city: street.city)
+        status: Assignment::STATUSES[:assigned], city: street.city, name: name,
+        assignee_id: params[:assigned_to])
     end
 end

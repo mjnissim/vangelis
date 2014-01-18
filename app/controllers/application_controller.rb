@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   check_authorization :unless => :devise_controller?
   
   def current_campaign
+    return if current_user.nil?
     cm = current_user.current_campaign 
     return cm if cm
     current_campaign = Campaign.first if Campaign.all.one?
