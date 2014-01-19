@@ -1,22 +1,11 @@
 class AssignmentGenerator
+  attr_reader :assignment_lines, :street, :campaign, :amount, :residences_each
+  
   def initialize campaign, street, amount, residences_each
     @campaign, @street, @amount, @residences_each =
       campaign, street, amount.to_i, residences_each.to_i
     @residences = uncovered_flats
-  end
-  
-  def generate
-    smart_shuffle
-    set_in_groups
-    internally_sort_groups
-    @groups
-  end
-  
-  def smart_shuffle
-    separate_non_flats
-    sort_by_largest_chunk
-    transpose_by_largest_chunk
-    recombine_non_flats
+    generate
   end
   
   def largest_chunk
@@ -40,12 +29,40 @@ class AssignmentGenerator
     blds[@street.city][@street]
   end
   
-  def grouped_by_building
-    @flats.group_by(&:building).values
-  end
-  
   
   private
+  
+    def generate
+      smart_shuffle
+      set_in_groups
+      internally_sort_groups
+      generate_assignment_lines_from_groups
+    end
+    
+    def generate_assignment_lines_from_groups
+      @assignment_lines = @groups.map do |group|
+        assignment_from_group group
+      end
+    end
+    
+    def assignment_from_group grp
+      buildings = grp.map do |bld| 
+        s = bld.building 
+        s << ( bld.covered_flats.any? ? "/#{bld.covered_flats.first}" : "" )
+      end
+      "#{ @street.name } #{ buildings.join(", ") }"
+    end
+    
+    def grouped_by_building
+      @flats.group_by(&:building).values
+    end
+  
+    def smart_shuffle
+      separate_non_flats
+      sort_by_largest_chunk
+      transpose_by_largest_chunk
+      recombine_non_flats
+    end
   
     def new_buildings_for_flats flats, bld
       return bld if flats.none?

@@ -102,29 +102,13 @@ class AssignmentsController < ApplicationController
       
       ag = AssignmentGenerator.new( current_campaign, street,
         params[:amount], params[:residences_each] )
-      groups = ag.generate
       
-      residences_to_assignments street, groups
-    end
-    
-    def residences_to_assignments street, residence_groups
-      @assignments = residence_groups.map do |grp|
-        residence_to_assignment street, grp
+      @assignments = ag.assignment_lines.map do |line|
+        name = NameGenerator.new.generate
+        current_campaign.assignments.build( user: current_user, report: line,
+          status: Assignment::STATUSES[:assigned], city: street.city, name: name,
+          assignee_id: params[:assigned_to])
       end
       @assignments.all?(&:save)
-    end
-    
-    def residence_to_assignment street, grp
-      buildings = grp.map do |bld| 
-        s = bld.building 
-        s << "/#{bld.covered_flats.first}" if bld.covered_flats.any?
-        s
-      end
-      report = "#{ street.name } #{buildings.join(", ")}"
-      puts "REPORT REPORT #{report}"
-      name = NameGenerator.new.generate
-      current_campaign.assignments.build( user: current_user, report: report,
-        status: Assignment::STATUSES[:assigned], city: street.city, name: name,
-        assignee_id: params[:assigned_to])
     end
 end
