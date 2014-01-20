@@ -103,11 +103,15 @@ class AssignmentsController < ApplicationController
       ag = AssignmentGenerator.new( current_campaign, street,
         params[:amount], params[:residences_each] )
       
-      @assignments = ag.assignment_lines.map do |name, line|
+      @assignments = assignments_from_lines( ag.assignment_lines, street ) 
+      @assignments.all?(&:save)
+    end
+    
+    def assignments_from_lines lines, street
+      lines.map do |name, line|
         current_campaign.assignments.build( user: current_user, report: line,
           status: Assignment::ASSIGNED, city: street.city, name: name,
           assignee_id: params[:assigned_to])
       end
-      @assignments.all?(&:save)
     end
 end
