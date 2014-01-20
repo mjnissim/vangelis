@@ -9,7 +9,7 @@ class Assignment < ActiveRecord::Base
   
   # SUGGESTION: MARK BLOCKS THAT ARE BEING BUILT, FOR A FUTURE VISIT.
   
-  STATUSES = { completed: 'COMPLETED', assigned: 'ASSIGNED' }
+  STATUSES = [ COMPLETED = 'COMPLETED', ASSIGNED = 'ASSIGNED' ]
   
   accepts_nested_attributes_for :lines, allow_destroy: true, 
     reject_if: proc { |attributes|
@@ -46,11 +46,11 @@ class Assignment < ActiveRecord::Base
   end
   
   def assigned?
-    status == STATUSES[:assigned]
+    status == ASSIGNED
   end
   
   def completed?
-    status == STATUSES[:completed]
+    status == COMPLETED
   end
   
   before_save do |assignment|

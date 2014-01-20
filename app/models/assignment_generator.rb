@@ -40,8 +40,9 @@ class AssignmentGenerator
     end
     
     def generate_assignment_lines_from_groups
-      @assignment_lines = @groups.map do |group|
-        assignment_from_group group
+      @assignment_lines = @groups.inject({}) do |h, group|
+        name = NameGenerator.new.generate
+        h.merge name => assignment_from_group( group )
       end
     end
     

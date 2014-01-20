@@ -5,12 +5,12 @@ div class="page-header"
 = render 'assignments_toolbar'
 p
 
-table class="table table-striped table-hover"
+table class="table table-striped table-hover table-condensed"
   thead
     tr
       th  ID
-      th= model_class.human_attribute_name(:date)
-      th  Where
+      th.span2= model_class.human_attribute_name(:date)
+      th.span4  Where
       th  Operative
       th= model_class.human_attribute_name(:status)
       th= model_class.human_attribute_name(:comments)
@@ -25,7 +25,7 @@ table class="table table-striped table-hover"
         td= operative assignment
         td class=status_color( assignment )
           = assignment.status
-        td= assignment.comments
+        td= assignment.comments.to_s.truncate( 45 )
         td
           - if assignment.assigned?
             = complete_assignment assignment

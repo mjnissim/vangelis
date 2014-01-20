@@ -65,7 +65,7 @@ class AssignmentsController < ApplicationController
   end
   
   def report
-    @assignment = Assignment.new( status: Assignment::STATUSES[:completed] )
+    @assignment = Assignment.new( status: Assignment::COMPLETED )
     render :new
   end
   
@@ -103,10 +103,9 @@ class AssignmentsController < ApplicationController
       ag = AssignmentGenerator.new( current_campaign, street,
         params[:amount], params[:residences_each] )
       
-      @assignments = ag.assignment_lines.map do |line|
-        name = NameGenerator.new.generate
+      @assignments = ag.assignment_lines.map do |name, line|
         current_campaign.assignments.build( user: current_user, report: line,
-          status: Assignment::STATUSES[:assigned], city: street.city, name: name,
+          status: Assignment::ASSIGNED, city: street.city, name: name,
           assignee_id: params[:assigned_to])
       end
       @assignments.all?(&:save)
