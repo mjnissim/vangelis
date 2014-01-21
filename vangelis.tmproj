@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>lib/tasks/maintenance.rake</string>
+	<string>app/models/assignment_generator.rb</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -26,65 +26,23 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>77</integer>
 				<key>line</key>
-				<integer>120</integer>
+				<integer>111</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>97</integer>
+			<integer>89</integer>
 		</dict>
-		<key>app/helpers/assignments_helper.rb</key>
+		<key>app/models/assignment_generator.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>45</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>25</integer>
-		</dict>
-		<key>app/views/assignments/generate.html.slim</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>15</integer>
-				<key>line</key>
-				<integer>19</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>app/views/assignments/index.html.slim</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>44</integer>
-				<key>line</key>
-				<integer>7</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>12</integer>
-		</dict>
-		<key>lib/tasks/maintenance.rake</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>66</integer>
-				<key>line</key>
-				<integer>4</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -94,11 +52,8 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>app/views/assignments/generate.html.slim</string>
 		<string>app/controllers/assignments_controller.rb</string>
-		<string>lib/tasks/maintenance.rake</string>
-		<string>app/views/assignments/index.html.slim</string>
-		<string>app/helpers/assignments_helper.rb</string>
+		<string>app/models/assignment_generator.rb</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>

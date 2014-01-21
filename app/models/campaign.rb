@@ -35,7 +35,7 @@ class Campaign < ActiveRecord::Base
             end
             # Now check if it was specifically marked as 'all covered'
             # or that the amount of covered flats in that building
-            # are equal to the amount of flats that that building is
+            # is equal to the amount of flats that that building is
             # known to have:
             existing and
               ( existing.all_covered? or

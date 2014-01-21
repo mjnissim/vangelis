@@ -94,7 +94,7 @@ class AssignmentGenerator
     end
     
     def set_in_groups
-      @groups = @residences.in_groups_of( @residences_each ).first( @amount )
+      @groups = @residences.in_groups_of( @residences_each, false ).first( @amount )
     end
     
     def recombine_non_flats

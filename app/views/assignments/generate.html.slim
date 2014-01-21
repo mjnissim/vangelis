@@ -9,10 +9,10 @@ div class="page-header"
     :streets, :name, :id, :name)
 
   = label_tag :amount, "How many assignment to generate?"
-  = text_field_tag :amount, 1
+  = number_field_tag :amount, 1, :in => 1..10
   
   = label_tag :residences_each, "How many residences in each assignment?"
-  = text_field_tag :residences_each, 4
+  = number_field_tag :residences_each, 4, :in => 1..10
   
   = label_tag :assigned_to, "Assign to:"
   = select_tag :assigned_to,
@@ -20,7 +20,7 @@ div class="page-header"
     :id, :email)
   
   .form-actions
-    = submit_tag nil, :class => 'btn btn-primary'
+    = submit_tag "Generate", :class => 'btn btn-primary'
     '
     = link_to t('.cancel', :default => t("helpers.links.cancel")), assignments_path, :class => 'btn'
   

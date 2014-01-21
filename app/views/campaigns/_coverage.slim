@@ -8,9 +8,9 @@
     - streets.each do |street, buildings|
       tr
         td= street.name
-        td= render partial: 'building', collection: buildings,
-            locals: { street: street, covered: covered, buildings: buildings }
-        td= "#{buildings.size} buildings"
+        td= render( partial: 'building', collection: buildings,
+            locals: { street: street, covered: covered, buildings: buildings }) || "None."
+        td= "#{buildings.any? ? buildings.size : 'No'} buildings"
     tr
       td
         strong= "#{streets.count} streets"

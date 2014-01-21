@@ -71,12 +71,12 @@ class AssignmentsController < ApplicationController
   
   def generate
     if request.method == 'POST'
-      notice = 'Assignments generated successfully.'
+      notice = 'Assignments successfully generated.'
       if auto_generate
-        redirect_to( assignments_url, notice: notice )
-      # else
-      #   flash.now[:error] = @assignment.errors.full_messages
-      #   render :generate
+        redirect_to( assignments_path, notice: notice )
+      else
+        flash.now[:error] = "Couldn't create assignments. Maybe out of residences?"
+        render :generate
       end
     end
   end
@@ -104,7 +104,7 @@ class AssignmentsController < ApplicationController
         params[:amount], params[:residences_each] )
       
       @assignments = assignments_from_lines( ag.assignment_lines, street ) 
-      @assignments.all?(&:save)
+      @assignments.any? and @assignments.all?(&:save)
     end
     
     def assignments_from_lines lines, street
