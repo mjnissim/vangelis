@@ -87,6 +87,10 @@ class RangeParser
     missing_numbers.map{ |n| Building.new( n ) }
   end
   private :missing_buildings_by_numbers
+  
+  def consecutive_str
+    ConciseString.new( buildings ).str
+  end
 end
 
 
@@ -216,6 +220,10 @@ class RangeParser
       [@highest_flat, @covered_flats.max].compact.max
     end
     
+    def flats?
+      highest_flat.present?
+    end
+    
     def highest_flat=( num )
       @highest_flat = [@highest_flat, num].compact.max
     end
@@ -241,7 +249,9 @@ class RangeParser
     end
     
     def to_s
-      "#{building} (#{covered_flats.to_a.join(', ')})"
+      return "#{building}/#{covered_flats.first}" if covered_flats.one?
+      flats = " (#{covered_flats.to_a.join(', ')})" if covered_flats.any?
+      "#{building}#{flats}"
     end
     
     def ==( other )
@@ -264,4 +274,67 @@ class RangeParser
     end
   end
   # end of class Building
+end
+
+class RangeParser
+  
+  private
+  
+  class ConciseString
+    def initialize buildings
+      @buildings = buildings.sort
+      @bld_arrays = []
+    end
+    
+    def str
+      @str = @str || build_string
+    end
+    
+    # '1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16'
+    
+    def build_string
+      process_buildings
+      arrays_to_strings.join( ", ")
+    end
+    
+    def process_buildings
+      @buildings.each_with_index do |bld, i|
+        @bld, @i = bld, i
+        process
+      end
+    end
+    
+    def process
+      case
+      when flats_or_entrance?( @bld )
+        @bld_arrays << [@bld]
+      when next_in_range?
+        @bld_arrays.last << @bld
+      else
+        @bld_arrays << [@bld]
+      end
+    end
+    
+    def next_in_range?
+      return unless last_bld
+      return if flats_or_entrance?( last_bld )
+        
+      last_bld.number.next == @bld.number
+    end
+    
+    def last_bld
+      @bld_arrays.last.try(:last)
+    end
+    
+    def flats_or_entrance? bld
+      bld.flats? or bld.entrance?
+    end
+    
+    def arrays_to_strings
+      @bld_arrays.map do |ar|
+        s = "#{ar.first}"
+        s << ( ar.many? ? "-#{ ar.last.number }" : '')
+      end
+    end
+  end
 end

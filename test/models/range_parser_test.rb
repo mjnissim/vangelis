@@ -259,4 +259,10 @@ class RangeParserTest < ActiveSupport::TestCase
     ar = ["2", "4", "11", "13", "15", "101", "111a", "111b"]
     assert_equal ar, rp.buildings.map(&:building)
   end
+  
+  test "Concise String works" do
+    rp = RangeParser.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
+    str = "1a, 2-8, 8a, 9/12, 10-16, 18-20"
+    assert_equal str, rp.consecutive_str
+  end
 end
