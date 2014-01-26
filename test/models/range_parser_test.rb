@@ -263,6 +263,12 @@ class RangeParserTest < ActiveSupport::TestCase
   test "Concise String works" do
     rp = RangeParser.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
     str = "1a, 2-8, 8a, 9/12, 10-16, 18-20"
-    assert_equal str, rp.consecutive_str
+    assert_equal str, rp.to_str
+  end
+  
+  test "Concise String works with even odd" do
+    rp = RangeParser.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
+    str = "1a, 3-7, 9/12, 11-15, 19, 2-8, 8a, 10-20"
+    assert_equal str, rp.to_str( even_odd: true )
   end
 end

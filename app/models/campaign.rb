@@ -30,7 +30,7 @@ class Campaign < ActiveRecord::Base
           uncovered_blds = all_blds.reject do |known_bld|
             # First check that it exists in the covered
             # buildings at all:
-            existing = covered_blds.find do |covered_bld |
+            existing = covered_blds.find do |covered_bld|
               covered_bld == known_bld
             end
             # Now check if it was specifically marked as 'all covered'

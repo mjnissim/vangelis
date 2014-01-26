@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>app/models/assignment_generator.rb</string>
+	<string>app/models/campaign.rb</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,39 +21,100 @@
 	<integer>254</integer>
 	<key>metaData</key>
 	<dict>
-		<key>app/controllers/assignments_controller.rb</key>
+		<key>app/models/campaign.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>77</integer>
+				<integer>56</integer>
 				<key>line</key>
-				<integer>111</integer>
+				<integer>32</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>89</integer>
+			<integer>24</integer>
 		</dict>
-		<key>app/models/assignment_generator.rb</key>
+		<key>app/models/range_parser.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>292</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>278</integer>
+		</dict>
+		<key>app/views/campaigns/_building.html.slim</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>81</integer>
+				<key>line</key>
+				<integer>12</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+		</dict>
+		<key>app/views/campaigns/_coverage.slim</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>13</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>10</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>13</integer>
+			</dict>
+		</dict>
+		<key>test/models/range_parser_test.rb</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>265</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>240</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>app/controllers/assignments_controller.rb</string>
-		<string>app/models/assignment_generator.rb</string>
+		<string>app/models/campaign.rb</string>
+		<string>app/views/campaigns/_coverage.slim</string>
+		<string>app/views/campaigns/_building.html.slim</string>
+		<string>app/models/range_parser.rb</string>
+		<string>test/models/range_parser_test.rb</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>

@@ -88,8 +88,8 @@ class RangeParser
   end
   private :missing_buildings_by_numbers
   
-  def consecutive_str
-    ConciseString.new( buildings ).str
+  def to_str even_odd: false
+    cs = ConciseString.new( buildings, even_odd: even_odd ).str
   end
 end
 
@@ -281,16 +281,29 @@ class RangeParser
   private
   
   class ConciseString
-    def initialize buildings
-      @buildings = buildings.sort
+    def initialize buildings, even_odd: false
+      @buildings = buildings
       @bld_arrays = []
+      even_odd ? set_even_odd : set_regular
+    end
+    
+    def set_even_odd
+      @increment = 2
+      @buildings = @buildings.sort do |bld, other_bld|
+        ar1 = [bld.number.odd? ? 0 : 1, bld]
+        ar2 = [other_bld.number.odd? ? 0 : 1, other_bld]
+        ar1 <=> ar2
+      end
+    end
+    
+    def set_regular
+      @increment = 1
+      @buildings = @buildings.sort
     end
     
     def str
       @str = @str || build_string
     end
-    
-    # '1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16'
     
     def build_string
       process_buildings
@@ -319,7 +332,7 @@ class RangeParser
       return unless last_bld
       return if flats_or_entrance?( last_bld )
         
-      last_bld.number.next == @bld.number
+      last_bld.number + @increment == @bld.number
     end
     
     def last_bld

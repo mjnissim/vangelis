@@ -10,7 +10,7 @@
   = building.building
 
 - if covered
-  = " (partial)" if building.covered_flats.any?
+  = " (partial)" if building.covered_flats.any? and building.uncovered_flats.any?
 - elsif building.uncovered_flats.any?
   = " (fl. #{building.uncovered_flats.join(', ')})"
 

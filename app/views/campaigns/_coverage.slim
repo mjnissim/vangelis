@@ -9,7 +9,8 @@
       tr
         td= street.name
         td= render( partial: 'building', collection: buildings,
-            locals: { street: street, covered: covered, buildings: buildings }) || "None."
+            locals: { street: street, covered: covered,
+            buildings: buildings }) || "None."
         td= "#{buildings.any? ? buildings.size : 'No'} buildings"
     tr
       td
