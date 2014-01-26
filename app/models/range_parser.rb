@@ -289,11 +289,7 @@ class RangeParser
     
     def set_even_odd
       @increment = 2
-      @buildings = @buildings.sort do |bld, other_bld|
-        ar1 = [bld.number.odd? ? 0 : 1, bld]
-        ar2 = [other_bld.number.odd? ? 0 : 1, other_bld]
-        ar1 <=> ar2
-      end
+      @buildings = @buildings.sort_by{ |bld| [bld.number.odd? ? 0 : 1, bld] }
     end
     
     def set_regular
