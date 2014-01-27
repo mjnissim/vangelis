@@ -277,9 +277,6 @@ class RangeParser
 end
 
 class RangeParser
-  
-  private
-  
   class ConciseString
     def initialize buildings, even_odd: false
       @buildings = buildings
@@ -287,14 +284,14 @@ class RangeParser
       even_odd ? set_even_odd : set_regular
     end
     
-    def set_even_odd
-      @increment = 2
-      @buildings = @buildings.sort_by{ |bld| [bld.number.odd? ? 0 : 1, bld] }
-    end
-    
     def set_regular
       @increment = 1
       @buildings = @buildings.sort
+    end
+    
+    def set_even_odd
+      @increment = 2
+      @buildings = @buildings.sort_by{ |bld| [bld.number.odd? ? 0 : 1, bld] }
     end
     
     def str
