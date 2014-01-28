@@ -1,9 +1,11 @@
 class RangeParser
   attr_reader :range_str, :last_error
+  attr_accessor :sort, :splat_flats
   
-  def initialize range_str, sort: true
+  def initialize range_str, sort: true, splat_flats: false
     self.range_str = range_str
     @sort = sort
+    @splat_flats = splat_flats
   end
   
   def range_str=( str )
@@ -33,7 +35,7 @@ class RangeParser
     return @parses unless @parses.nil?
     
     # One of the sections will throw an exception if unparsable:
-    sections()
+    buildings()
     
     @parses = true
   rescue => e
@@ -52,6 +54,8 @@ class RangeParser
     end
     
     fill_gaps( buildings ) if fill_gaps
+    
+    splat_flats_for( buildings ) if splat_flats
 
     buildings.sort! if @sort
     
@@ -88,6 +92,23 @@ class RangeParser
   end
   private :missing_buildings_by_numbers
   
+  def splat_flats_for buildings
+    buildings.map! do |bld|
+      new_buildings_for( bld )
+    end.flatten!
+  end
+  private :splat_flats_for
+  
+  def new_buildings_for bld
+    return [bld] if bld.covered_flats.none?
+    bld.covered_flats.map do |flat|
+      b = RangeParser::Building.new( bld.number, bld.entrance )
+      ( b.covered_flats << flat ) and b
+    end
+  end
+  private :new_buildings_for
+  
+  # Sorts buildings without regard to whether 'sort' is set to true or false.
   def to_str even_odd: false
     cs = ConciseString.new( buildings, even_odd: even_odd ).str
   end
@@ -250,6 +271,7 @@ class RangeParser
     
     def to_s
       return "#{building}/#{covered_flats.first}" if covered_flats.one?
+      
       flats = " (#{covered_flats.to_a.join(', ')})" if covered_flats.any?
       "#{building}#{flats}"
     end
@@ -259,10 +281,10 @@ class RangeParser
     end
     
     def <=>( other )
-      a = [number, entrance.to_s]
-      a << covered_flats.first.to_i
-      b = [other.number, other.entrance.to_s]
-      b << other.covered_flats.first.to_i
+      a, b = [self, other].map do |bld|
+        [ bld.number, bld.entrance.to_s ] + [ bld.covered_flats.first.to_i ]
+      end
+
       a <=> b 
     end
     
@@ -270,6 +292,7 @@ class RangeParser
       other_flats = buildings.flat_map{ |bld| bld.covered_flats.to_a }
       covered_flats.merge other_flats
       @all_covered = buildings.select(&:all_covered).any?
+      
       self
     end
   end

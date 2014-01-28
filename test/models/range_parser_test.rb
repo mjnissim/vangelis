@@ -271,4 +271,16 @@ class RangeParserTest < ActiveSupport::TestCase
     str = "1a, 3-7, 9/12, 11-15, 19, 2-8, 8a, 10-20"
     assert_equal str, rp.to_str( even_odd: true )
   end
+  
+  test "splat flats" do
+    rp = RangeParser.new('3b/6, 3b/4, 3a', splat_flats: true)
+    str = "3a, 3b/4, 3b/6"
+    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+  end
+  
+  test "splat flats without sort (but sort by flat)" do
+    rp = RangeParser.new('3b/6 3b/4 3a', splat_flats: true, sort: false)
+    str = "3b/4, 3b/6, 3a"
+    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+  end
 end
