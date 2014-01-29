@@ -213,31 +213,31 @@ class RangeParserTest < ActiveSupport::TestCase
   test "RangeParser sort" do
     r = RangeParser.new "2, 10b/6, 10b/20", sort: true
     assert_equal ["2", "10b"] , r.buildings.map(&:building)
-    assert_equal [6, 20], r.buildings.second.covered_flats.to_a
+    assert_equal [6, 20], r.buildings.second.marked_flats.to_a
   end
   
-  test "Consider all flats covered if block without flats" do
+  test "Consider all flats marked if block without flats" do
     rp = RangeParser.new "9-10, 10/6, 10/8"
     bld = rp.buildings.second
-    bld.all_covered = true
+    bld.all_marked = true
     assert_equal 8, bld.highest_flat
-    assert_equal [1,2,3,4,5,6,7,8], bld.covered_flats.to_a
+    assert_equal [1,2,3,4,5,6,7,8], bld.marked_flats.to_a
   end
   
-  test "even after adding changing to 'all_covered' it records higher numbers" do
+  test "even after adding changing to 'all_marked' it records higher numbers" do
     rp = RangeParser.new "9-10, 10/6"
     bld = rp.buildings.second
-    bld.all_covered = true
-    bld.covered_flats << 8
+    bld.all_marked = true
+    bld.marked_flats << 8
     assert_equal 8, bld.highest_flat
-    assert_equal [1,2,3,4,5,6,7,8], bld.covered_flats.to_a
+    assert_equal [1,2,3,4,5,6,7,8], bld.marked_flats.to_a
   end
   
-  test "Properly merges 'all_covered'" do
+  test "Properly merges 'all_marked'" do
     rp = RangeParser.new "10/6, 10, 10/3"
     bld = rp.buildings.first
-    assert true, bld.all_covered?
-    assert_equal SortedSet.new([*1..6]), bld.covered_flats
+    assert true, bld.all_marked?
+    assert_equal SortedSet.new([*1..6]), bld.marked_flats
   end
   
   test "Fills gaps in building ranges" do
@@ -281,6 +281,20 @@ class RangeParserTest < ActiveSupport::TestCase
   test "splat flats without sort (but sort by flat)" do
     rp = RangeParser.new('3b/6 3b/4 3a', splat_flats: true, sort: false)
     str = "3b/4, 3b/6, 3a"
+    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+  end
+  
+  test "Switch flat's markings" do
+    rp = RangeParser.new('3b/6 3b/4 3a', splat_flats: false)
+    rp.switch_markings = true
+    str = "3a, 3b (1, 2, 3, 5)"
+    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+  end
+  
+  test "Switch flat's markings and splat flats" do
+    rp = RangeParser.new('3b/6 3b/4 3a', splat_flats: true)
+    rp.switch_markings = true
+    str = "3a, 3b/1, 3b/2, 3b/3, 3b/5"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
   end
 end

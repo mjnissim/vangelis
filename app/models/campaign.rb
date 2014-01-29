@@ -33,13 +33,13 @@ class Campaign < ActiveRecord::Base
             existing = covered_blds.find do |covered_bld|
               covered_bld == known_bld
             end
-            # Now check if it was specifically marked as 'all covered'
-            # or that the amount of covered flats in that building
+            # Now check if it was specifically marked as 'all marked'
+            # or that the amount of marked flats in that building
             # is equal to the amount of flats that that building is
             # known to have:
             existing and
-              ( existing.all_covered? or
-                existing.covered_flats.size == known_bld.highest_flat.to_i
+              ( existing.all_marked? or
+                existing.marked_flats.size == known_bld.highest_flat.to_i
               )
           end
           

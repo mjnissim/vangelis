@@ -1,11 +1,12 @@
 class RangeParser
   attr_reader :range_str, :last_error
-  attr_accessor :sort, :splat_flats
+  attr_accessor :sort, :splat_flats, :switch_markings
   
   def initialize range_str, sort: true, splat_flats: false
     self.range_str = range_str
     @sort = sort
     @splat_flats = splat_flats
+    @switch_markings = switch_markings
   end
   
   def range_str=( str )
@@ -55,6 +56,8 @@ class RangeParser
     
     fill_gaps( buildings ) if fill_gaps
     
+    switch_markings_for( buildings ) if switch_markings
+    
     splat_flats_for( buildings ) if splat_flats
 
     buildings.sort! if @sort
@@ -100,13 +103,18 @@ class RangeParser
   private :splat_flats_for
   
   def new_buildings_for bld
-    return [bld] if bld.covered_flats.none?
-    bld.covered_flats.map do |flat|
+    return [bld] if bld.marked_flats.none?
+    bld.marked_flats.map do |flat|
       b = RangeParser::Building.new( bld.number, bld.entrance )
-      ( b.covered_flats << flat ) and b
+      ( b.marked_flats << flat ) and b
     end
   end
   private :new_buildings_for
+  
+  def switch_markings_for buildings
+    buildings.each &:switch_markings
+  end
+  private :switch_markings_for
   
   # Sorts buildings without regard to whether 'sort' is set to true or false.
   def to_str even_odd: false
@@ -162,7 +170,7 @@ class RangeParser
     
     def building
       bld = Building.new( number, entrance )
-      flat ? bld.covered_flats << flat : bld.all_covered = true
+      flat ? bld.marked_flats << flat : bld.all_marked = true
       bld
     end
     
@@ -223,13 +231,13 @@ end
 class RangeParser
   class Building
     attr_reader :number, :entrance
-    attr_accessor :all_covered
-    alias :all_covered? :all_covered
+    attr_accessor :all_marked
+    alias :all_marked? :all_marked
     
     def initialize number, entrance = nil
       @number = number
       @entrance = entrance
-      @covered_flats = SortedSet.new
+      @marked_flats = SortedSet.new
     end
     
     def entrance?
@@ -238,7 +246,7 @@ class RangeParser
     
     # Returns number of flats, or nil.
     def highest_flat
-      [@highest_flat, @covered_flats.max].compact.max
+      [@highest_flat, @marked_flats.max].compact.max
     end
     
     def flats?
@@ -249,16 +257,16 @@ class RangeParser
       @highest_flat = [@highest_flat, num].compact.max
     end
     
-    def covered_flats
-      if all_covered?
-        @covered_flats = SortedSet.new( all_flats )
+    def marked_flats
+      if all_marked?
+        @marked_flats = SortedSet.new( all_flats )
       end
       
-      @covered_flats
+      @marked_flats
     end
     
-    def uncovered_flats
-      all_flats - covered_flats.to_a
+    def unmarked_flats
+      all_flats - marked_flats.to_a
     end
     
     def all_flats
@@ -270,9 +278,9 @@ class RangeParser
     end
     
     def to_s
-      return "#{building}/#{covered_flats.first}" if covered_flats.one?
+      return "#{building}/#{marked_flats.first}" if marked_flats.one?
       
-      flats = " (#{covered_flats.to_a.join(', ')})" if covered_flats.any?
+      flats = " (#{marked_flats.to_a.join(', ')})" if marked_flats.any?
       "#{building}#{flats}"
     end
     
@@ -282,18 +290,27 @@ class RangeParser
     
     def <=>( other )
       a, b = [self, other].map do |bld|
-        [ bld.number, bld.entrance.to_s ] + [ bld.covered_flats.first.to_i ]
+        [ bld.number, bld.entrance.to_s ] + [ bld.marked_flats.first.to_i ]
       end
 
       a <=> b 
     end
     
     def merge buildings
-      other_flats = buildings.flat_map{ |bld| bld.covered_flats.to_a }
-      covered_flats.merge other_flats
-      @all_covered = buildings.select(&:all_covered).any?
+      other_flats = buildings.flat_map{ |bld| bld.marked_flats.to_a }
+      marked_flats.merge other_flats
+      @all_marked = buildings.select(&:all_marked).any?
       
       self
+    end
+    
+    def switch_markings
+      # The next line seems unnecessary, but if highest_flat is taken from
+      # highest marked flat, switching its status could result in a lower
+      # highest_flat. This ensures it remains.
+      self.highest_flat = highest_flat
+      
+      marked_flats.replace unmarked_flats
     end
   end
   # end of class Building

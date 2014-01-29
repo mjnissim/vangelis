@@ -20,7 +20,7 @@ class AssignmentGenerator
   
   def uncovered_flats
     uncovered_buildings.flat_map do |bld|
-      new_buildings_for_flats( bld.uncovered_flats, bld )
+      new_buildings_for_flats( bld.unmarked_flats, bld )
     end
   end
   
@@ -49,7 +49,7 @@ class AssignmentGenerator
     def assignment_from_group grp
       buildings = grp.map do |bld| 
         s = bld.building 
-        s << ( bld.covered_flats.any? ? "/#{bld.covered_flats.first}" : "" )
+        s << ( bld.marked_flats.any? ? "/#{bld.marked_flats.first}" : "" )
       end
       "#{ @street.name } #{ buildings.join(", ") }"
     end
@@ -72,7 +72,7 @@ class AssignmentGenerator
   
     def new_building_for flat, bld
       b = RangeParser::Building.new( bld.number, bld.entrance )
-      b.covered_flats<<flat
+      b.marked_flats<<flat
       b
     end
   
@@ -86,7 +86,7 @@ class AssignmentGenerator
     end
     
     def separate_non_flats
-      @flats, @non_flats = @residences.partition{ |b| b.covered_flats.any? }
+      @flats, @non_flats = @residences.partition{ |b| b.marked_flats.any? }
     end
     
     def internally_sort_groups
