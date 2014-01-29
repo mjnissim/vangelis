@@ -96,20 +96,9 @@ class RangeParser
   private :missing_buildings_by_numbers
   
   def splat_flats_for buildings
-    buildings.map! do |bld|
-      new_buildings_for( bld )
-    end.flatten!
+    buildings.map!(&:splat).flatten!
   end
   private :splat_flats_for
-  
-  def new_buildings_for bld
-    return [bld] if bld.marked_flats.none?
-    bld.marked_flats.map do |flat|
-      b = RangeParser::Building.new( bld.number, bld.entrance )
-      ( b.marked_flats << flat ) and b
-    end
-  end
-  private :new_buildings_for
   
   def switch_markings_for buildings
     buildings.each &:switch_markings
@@ -302,6 +291,14 @@ class RangeParser
       @all_marked = buildings.select(&:all_marked).any?
       
       self
+    end
+    
+    def splat
+      return [self] if marked_flats.none?
+      marked_flats.map do |flat|
+        b = RangeParser::Building.new( number, entrance )
+        ( b.marked_flats << flat ) and b
+      end
     end
     
     def switch_markings
