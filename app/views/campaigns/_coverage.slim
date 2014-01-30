@@ -1,6 +1,6 @@
 - entirely_uncovered = @campaign.entirely_uncovered_streets_by_city
 
-- @campaign.buildings_by_city_and_street(marked: marked).each do |city, streets|
+- @campaign.buildings(covered: covered).each do |city, streets|
   table.table.table-striped.table-bordered
     tr
       td colspan="3"

@@ -1,4 +1,4 @@
-class RangeParser
+class BuildingRange
   attr_reader :range_str, :last_error
   attr_accessor :sort, :splat_flats, :switch_markings
   
@@ -109,10 +109,15 @@ class RangeParser
   def to_str even_odd: false
     cs = ConciseString.new( buildings, even_odd: even_odd ).str
   end
+  
+  def [] (building)
+    return buildings.find{ |bld| bld == building } if building.is_a? Building
+    buildings.find{ |bld| bld.building == building }
+  end
 end
 
 
-class RangeParser
+class BuildingRange
   class Section
     attr_reader :str
     
@@ -217,7 +222,7 @@ class RangeParser
 end
 
 
-class RangeParser
+class BuildingRange
   class Building
     attr_reader :number, :entrance
     attr_accessor :all_marked
@@ -296,7 +301,7 @@ class RangeParser
     def splat
       return [self] if marked_flats.none?
       marked_flats.map do |flat|
-        b = RangeParser::Building.new( number, entrance )
+        b = BuildingRange::Building.new( number, entrance )
         ( b.marked_flats << flat ) and b
       end
     end
@@ -313,7 +318,7 @@ class RangeParser
   # end of class Building
 end
 
-class RangeParser
+class BuildingRange
   class ConciseString
     def initialize buildings, even_odd: false
       @buildings = buildings

@@ -45,26 +45,22 @@ class Street < ActiveRecord::Base
   end
   
   def covered_ranges
-    assignment_lines.map{ |al| al.numbers }.join( "," )
+    assignment_lines.map{ |al| al.numbers }.join( ", " )
   end
   
-  def reported_buildings
+  def buildings
     return @buildings if @buildings
     
-    rp = RangeParser.new( covered_ranges )
-    @buildings = rp.buildings if rp.parses?
+    rp = BuildingRange.new( covered_ranges )
+    @buildings = rp if rp.parses?
   end
   
   # Returns all possible buildings, including unreported buildings.
   def all_buildings
     return @all_buildings if @all_buildings
     
-    @all_buildings = RangeParser.new( covered_ranges )
+    @all_buildings = BuildingRange.new( covered_ranges )
     @all_buildings = @all_buildings.buildings( fill_gaps: true )
-  end
-  
-  def building building
-    reported_buildings.select{ |bld|  bld.building == building.to_s }
   end
   
   before_save do

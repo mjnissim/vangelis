@@ -80,7 +80,7 @@ class AssignmentLine < ActiveRecord::Base
   
   # Attempts to process block numbers and returns true or false accordingly.
   def process_numbers
-    rp = RangeParser.new( numbers )
+    rp = BuildingRange.new( numbers )
     return true if rp.parses?
     
     errors.add( :base, rp.last_error )
