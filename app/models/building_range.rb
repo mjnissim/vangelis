@@ -1,10 +1,11 @@
 class BuildingRange
   attr_reader :sort, :range_str, :last_error, :fill_gaps,
-              :splat, :switch_markings
+              :splat, :switch_markings, :street
   
-  def initialize range_str, fill_gaps: false
+  def initialize range_str, street: nil, fill_gaps: false
     self.range_str = range_str
     @sort = true
+    @street = street
     @fill_gaps = fill_gaps
   end
   
@@ -52,7 +53,9 @@ class BuildingRange
   end
   
   def sections
-    section_strings.map{ | section_str | Section.new( section_str ) }
+    section_strings.map do | section_str |
+      Section.new( section_str, street: @street )
+    end
   end
   
   def parses?
@@ -118,20 +121,25 @@ class BuildingRange
         highest_entrance = entrances.max
         missing_entrances = [*"a"..highest_entrance] - entrances
         missing_entrances.each do |entrance|
-          @buildings << Building.new( number, entrance )
+          @buildings << Building.new( number, entrance, street: @street )
         end
       end
     end
   
     def fill_numbers
-      all_building_numbers = [*1..@buildings.max.number]
-      missing_numbers = all_building_numbers - building_numbers
-      missing_blds = missing_numbers.map{ |n| Building.new( n ) }
+      missing_numbers = all_possible_building_numbers - building_numbers
+      missing_blds = missing_numbers.map do |n|
+        Building.new( n, nil, street: @street )
+      end
       @buildings.concat missing_blds
     end
     
     def building_numbers
       @buildings.map(&:number)
+    end
+    
+    def all_possible_building_numbers
+      [*1..@buildings.max.number]
     end
     
     def buildings_with_entrances
@@ -150,10 +158,11 @@ end
 
 class BuildingRange
   class Section
-    attr_reader :str
+    attr_reader :str, :street
     
-    def initialize str
+    def initialize str, street: street
       @str = str.strip # or .dup
+      @street = street
       validate!
     end
     
@@ -188,7 +197,7 @@ class BuildingRange
     end
     
     def building
-      bld = Building.new( number, entrance )
+      bld = Building.new( number, entrance, street: @street )
       flat ? bld.marked_flats << flat : bld.all_marked = true
       bld
     end
@@ -199,7 +208,7 @@ class BuildingRange
       ar = *low..high
       ar.select!{ |n| n.send "#{even_odd}?" } if even_odd?
       
-      ar.map{ |e| Building.new( e ) }
+      ar.map{ |e| Building.new( e, nil, street: @street ) }
     end
     
     # Returns "even", "odd", or nil.
@@ -249,13 +258,14 @@ end
 
 class BuildingRange
   class Building
-    attr_reader :number, :entrance
+    attr_reader :number, :entrance, :street
     attr_accessor :all_marked
     alias :all_marked? :all_marked
     
-    def initialize number, entrance = nil
+    def initialize number, entrance = nil, street: street
       @number = number
       @entrance = entrance
+      @street = street
       @marked_flats = SortedSet.new
     end
     
@@ -265,15 +275,17 @@ class BuildingRange
     
     # Returns number of flats, or nil.
     def highest_flat
-      [@highest_flat, @marked_flats.max].compact.max
-    end
-    
-    def flats?
-      highest_flat.present?
+      from_street = @street.buildings[self].try( :highest_flat ) if @street
+      # puts "FROM STREET #{@street.name}"
+      [from_street, @highest_flat, @marked_flats.max].compact.max
     end
     
     def highest_flat=( num )
       @highest_flat = [@highest_flat, num].compact.max
+    end
+    
+    def flats?
+      highest_flat.present?
     end
     
     def marked_flats
@@ -326,7 +338,7 @@ class BuildingRange
     def splat
       return [self] if marked_flats.none?
       marked_flats.map do |flat|
-        b = BuildingRange::Building.new( number, entrance )
+        b = BuildingRange::Building.new( number, entrance, street: @street )
         ( b.marked_flats << flat ) and b
       end
     end
