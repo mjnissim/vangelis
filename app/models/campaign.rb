@@ -24,7 +24,7 @@ class Campaign < ActiveRecord::Base
           
           # 1. Get all possible buildings for that street,
           #    including unreported ones:
-          all_blds = street.all_buildings
+          all_blds = street.all_buildings.buildings
           
           # 2. Subtract all fully covered_buildings:
           uncovered_blds = all_blds.reject do |known_bld|

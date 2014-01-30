@@ -3,7 +3,7 @@
     { controller: :streets, action: :set_high_building,
     id: street.id, number: building.building, campaign_id: @campaign.id},
     method: :patch, confirm: "Are you sure you would like to change #{street.name} high number to #{building.building}?"
-- elsif building == street.all_buildings.last
+- elsif building == street.all_buildings.buildings.last
   strong
     = building.building
 - else

@@ -1,20 +1,43 @@
 class BuildingRange
-  attr_reader :range_str, :last_error
-  attr_accessor :sort, :splat_flats, :switch_markings
+  attr_reader :sort, :range_str, :last_error, :fill_gaps,
+              :splat, :switch_markings
   
-  def initialize range_str, sort: true, splat_flats: false
+  def initialize range_str, fill_gaps: false
     self.range_str = range_str
-    @sort = sort
-    @splat_flats = splat_flats
-    @switch_markings = switch_markings
+    @sort = true
+    @fill_gaps = fill_gaps
   end
   
   def range_str=( str )
     @range_str = str.strip.dup
-    @parses = nil
-    @last_error = nil
-    parses?
+    reset
   end
+  
+  def sort= value
+    @sort = value
+    reset
+  end
+  
+  def fill_gaps= value
+    @fill_gaps = value
+    reset
+  end
+  
+  def splat= value
+    @splat = value
+    reset
+  end
+  
+  def switch_markings= value
+    @switch_markings = value
+    reset
+  end
+  
+  def reset
+    @last_error = nil
+    @buildings = nil
+  end
+  private :reset
   
   # Clean the string up and get it ready for parsing.
   def section_strings
@@ -33,77 +56,22 @@ class BuildingRange
   end
   
   def parses?
-    return @parses unless @parses.nil?
-    
     # One of the sections will throw an exception if unparsable:
     buildings()
+    true
     
-    @parses = true
   rescue => e
     @last_error = e.message
-    @parses = false
+    false
   end
   
-  def buildings fill_gaps: false
-    all_buildings = sections.flat_map(&:buildings)
+  def buildings
+    return @buildings if @buildings
     
-    grouped = all_buildings.group_by(&:building)
-    
-    buildings = grouped.map do |building, buildings|
-      other_buildings = buildings.drop( 1 )
-      buildings.first.merge( other_buildings )
-    end
-    
-    fill_gaps( buildings ) if fill_gaps
-    
-    switch_markings_for( buildings ) if switch_markings
-    
-    splat_flats_for( buildings ) if splat_flats
-
-    buildings.sort! if @sort
-    
-    buildings 
+    prepare_buildings
+    @buildings.dup
   end
-  
-  def fill_gaps buildings
-    buildings.concat missing_buildings_by_entrances( buildings )
-    buildings.concat missing_buildings_by_numbers( buildings )
-  end
-  private :fill_gaps
-
-  def missing_buildings_by_entrances buildings
-    missing_blds = []
-    with_entrances = buildings.select{ |bld| bld.entrance? }
-    by_number = with_entrances.group_by(&:number)
-    by_number.each do |number, buildings|
-      entrances = buildings.map(&:entrance)
-      highest_entrance = entrances.max
-      missing_entrances = [*"a"..highest_entrance] - entrances
-      missing_entrances.each do |entrance|
-        missing_blds << Building.new( number, entrance )
-      end
-    end
-    missing_blds
-  end
-  # private :missing_buildings_by_entrances
-  
-  def missing_buildings_by_numbers buildings
-    existing_numbers = buildings.map(&:number)
-    all_numbers = [*1..buildings.max.number]
-    missing_numbers = all_numbers - existing_numbers
-    missing_numbers.map{ |n| Building.new( n ) }
-  end
-  private :missing_buildings_by_numbers
-  
-  def splat_flats_for buildings
-    buildings.map!(&:splat).flatten!
-  end
-  private :splat_flats_for
-  
-  def switch_markings_for buildings
-    buildings.each &:switch_markings
-  end
-  private :switch_markings_for
+  alias :to_a :buildings
   
   # Sorts buildings without regard to whether 'sort' is set to true or false.
   def to_str even_odd: false
@@ -114,6 +82,69 @@ class BuildingRange
     return buildings.find{ |bld| bld == building } if building.is_a? Building
     buildings.find{ |bld| bld.building == building }
   end
+  
+  def ungrouped_buildings
+    sections.flat_map(&:buildings)
+  end
+  
+  private
+  
+    def prepare_buildings
+      @buildings = grouped_buildings
+      fill_building_gaps() if fill_gaps
+      switch_flat_markings() if switch_markings
+      splat_flats() if splat
+      @buildings.sort! if @sort
+    end
+  
+    def grouped_buildings
+      grouped = ungrouped_buildings.group_by(&:building)
+      grouped.map do |building, buildings|
+        other_buildings = buildings.drop( 1 )
+        buildings.first.merge( other_buildings )
+      end
+    end
+    
+    def fill_building_gaps
+      fill_entrances
+      fill_numbers
+    end
+  
+    def fill_entrances
+      missing_blds = []
+      by_number = buildings_with_entrances.group_by(&:number)
+      by_number.each do |number, buildings|
+        entrances = buildings.map(&:entrance)
+        highest_entrance = entrances.max
+        missing_entrances = [*"a"..highest_entrance] - entrances
+        missing_entrances.each do |entrance|
+          @buildings << Building.new( number, entrance )
+        end
+      end
+    end
+  
+    def fill_numbers
+      all_building_numbers = [*1..@buildings.max.number]
+      missing_numbers = all_building_numbers - building_numbers
+      missing_blds = missing_numbers.map{ |n| Building.new( n ) }
+      @buildings.concat missing_blds
+    end
+    
+    def building_numbers
+      @buildings.map(&:number)
+    end
+    
+    def buildings_with_entrances
+      @buildings.select(&:entrance?)
+    end
+  
+    def splat_flats
+      @buildings.map!(&:splat).flatten!
+    end
+  
+    def switch_flat_markings
+      @buildings.each &:switch_markings
+    end
 end
 
 
@@ -151,12 +182,6 @@ class BuildingRange
         n unless n.zero?
       end
     end
-    
-    # def number_entrance_flat
-    #   if building?
-    #     "#{number}#{entrance}#{ '/' + flat.to_s if flat? }"
-    #   end
-    # end
     
     def building?
       not range?

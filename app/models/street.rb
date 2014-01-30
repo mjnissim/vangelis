@@ -59,8 +59,7 @@ class Street < ActiveRecord::Base
   def all_buildings
     return @all_buildings if @all_buildings
     
-    @all_buildings = BuildingRange.new( covered_ranges )
-    @all_buildings = @all_buildings.buildings( fill_gaps: true )
+    @all_buildings = BuildingRange.new( covered_ranges, fill_gaps: true )
   end
   
   before_save do

@@ -211,7 +211,7 @@ class BuildingRangeTest < ActiveSupport::TestCase
   end
 
   test "BuildingRange sort" do
-    r = BuildingRange.new "2, 10b/6, 10b/20", sort: true
+    r = BuildingRange.new "2, 10b/6, 10b/20"
     assert_equal ["2", "10b"] , r.buildings.map(&:building)
     assert_equal [6, 20], r.buildings.second.marked_flats.to_a
   end
@@ -241,8 +241,8 @@ class BuildingRangeTest < ActiveSupport::TestCase
   end
   
   test "Fills gaps in building ranges" do
-    rp = BuildingRange.new "5-7, 1d, 1b"
-    blds  = rp.buildings(fill_gaps: true)
+    rp = BuildingRange.new( "5-7, 1d, 1b", fill_gaps: true )
+    blds  = rp.buildings
     nums = ["1a", "1b", "1c", "1d", "2", "3", "4", "5", "6", "7"]
     assert_equal nums, blds.map(&:building)
   end
@@ -273,26 +273,30 @@ class BuildingRangeTest < ActiveSupport::TestCase
   end
   
   test "splat flats" do
-    rp = BuildingRange.new('3b/6, 3b/4, 3a', splat_flats: true)
+    rp = BuildingRange.new('3b/6, 3b/4, 3a')
+    rp.splat = true
     str = "3a, 3b/4, 3b/6"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
   end
   
-  test "splat flats without sort (but sort by flat)" do
-    rp = BuildingRange.new('3b/6 3b/4 3a', splat_flats: true, sort: false)
+  test "splat flats without sort (but sort flats internally)" do
+    rp = BuildingRange.new('3b/6 3b/4 3a')
+    rp.sort = false
+    rp.splat = true
     str = "3b/4, 3b/6, 3a"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
   end
   
   test "Switch flat's markings" do
-    rp = BuildingRange.new('3b/6 3b/4 3a', splat_flats: false)
+    rp = BuildingRange.new('3b/6 3b/4 3a')
     rp.switch_markings = true
     str = "3a, 3b (1, 2, 3, 5)"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
   end
   
   test "Switch flat's markings and splat flats" do
-    rp = BuildingRange.new('3b/6 3b/4 3a', splat_flats: true)
+    rp = BuildingRange.new('3b/6 3b/4 3a')
+    rp.splat = true
     rp.switch_markings = true
     str = "3a, 3b/1, 3b/2, 3b/3, 3b/5"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
