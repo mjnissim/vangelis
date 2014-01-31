@@ -2,7 +2,7 @@ class BuildingRange
   attr_reader :sort, :range_str, :last_error, :fill_gaps,
               :splat, :switch_markings, :street
   
-  def initialize range_str, street: nil, fill_gaps: false
+  def initialize range_str = nil, street: nil, fill_gaps: false
     self.range_str = range_str
     @sort = true
     @street = street
@@ -10,7 +10,7 @@ class BuildingRange
   end
   
   def range_str=( str )
-    @range_str = str.strip.dup
+    @range_str = str.to_s.strip #.dup
     reset
   end
   
@@ -69,10 +69,10 @@ class BuildingRange
   end
   
   def buildings
-    return @buildings if @buildings
+    return @buildings.dup if @buildings
     
     prepare_buildings
-    @buildings.dup
+    buildings
   end
   alias :to_a :buildings
   
