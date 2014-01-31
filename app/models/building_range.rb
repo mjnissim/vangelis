@@ -259,8 +259,7 @@ end
 class BuildingRange
   class Building
     attr_reader :number, :entrance, :street
-    attr_accessor :all_marked
-    alias :all_marked? :all_marked
+    attr_writer :all_marked
     
     def initialize str, street: street
       @street = street
@@ -284,7 +283,7 @@ class BuildingRange
     
     # Returns number of flats, or nil.
     def highest_flat
-      from_street = @street.buildings[self].try( :highest_flat ) if @street
+      from_street = @street.buildings[ self ].try( :highest_flat ) if @street
 
       [from_street, @highest_flat, @marked_flats.max].compact.max
     end
@@ -298,11 +297,7 @@ class BuildingRange
     end
     
     def marked_flats
-      if all_marked?
-        @marked_flats = SortedSet.new( all_flats )
-      end
-      
-      @marked_flats
+      @all_marked ? @marked_flats = SortedSet.new( all_flats ) : @marked_flats
     end
     
     def unmarked_flats
@@ -312,6 +307,13 @@ class BuildingRange
     def all_flats
       [*1..highest_flat.to_i]
     end
+    
+    def all_marked
+      @all_marked or
+      ( @street and flats? and marked_flats.size == highest_flat )
+    end
+    alias :all_marked? :all_marked
+    
     
     def building
       "#{number}#{entrance}"
