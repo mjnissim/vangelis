@@ -121,15 +121,15 @@ class BuildingRange
         highest_entrance = entrances.max
         missing_entrances = [*"a"..highest_entrance] - entrances
         missing_entrances.each do |entrance|
-          @buildings << Building.new( number, entrance, street: @street )
+          @buildings << Building.new( "#{number}#{entrance}", street: @street )
         end
       end
     end
   
     def fill_numbers
       missing_numbers = all_possible_building_numbers - building_numbers
-      missing_blds = missing_numbers.map do |n|
-        Building.new( n, nil, street: @street )
+      missing_blds = missing_numbers.map do |number|
+        Building.new( number.to_s, street: @street )
       end
       @buildings.concat missing_blds
     end
@@ -197,7 +197,7 @@ class BuildingRange
     end
     
     def building
-      bld = Building.new( number, entrance, street: @street )
+      bld = Building.new( "#{number}#{entrance}", street: @street )
       flat ? bld.marked_flats << flat : bld.all_marked = true
       bld
     end
@@ -208,7 +208,7 @@ class BuildingRange
       ar = *low..high
       ar.select!{ |n| n.send "#{even_odd}?" } if even_odd?
       
-      ar.map{ |e| Building.new( e, nil, street: @street ) }
+      ar.map{ |num| Building.new( num.to_s, street: @street ) }
     end
     
     # Returns "even", "odd", or nil.
@@ -262,12 +262,21 @@ class BuildingRange
     attr_accessor :all_marked
     alias :all_marked? :all_marked
     
-    def initialize number, entrance = nil, street: street
-      @number = number
-      @entrance = entrance
+    def initialize str, street: street
       @street = street
       @marked_flats = SortedSet.new
+      initialize_from_string str
     end
+    
+    def initialize_from_string str
+      sec = Section.new( str )
+      raise "Cannot initialize building from #{str}" unless sec.building?
+      
+      @number = sec.number
+      @entrance = sec.entrance
+      @marked_flats << sec.flat if sec.flat?
+    end
+    private :initialize_from_string
     
     def entrance?
       not entrance.blank?
@@ -276,7 +285,7 @@ class BuildingRange
     # Returns number of flats, or nil.
     def highest_flat
       from_street = @street.buildings[self].try( :highest_flat ) if @street
-      # puts "FROM STREET #{@street.name}"
+
       [from_street, @highest_flat, @marked_flats.max].compact.max
     end
     
@@ -337,9 +346,9 @@ class BuildingRange
     
     def splat
       return [self] if marked_flats.none?
+      
       marked_flats.map do |flat|
-        b = BuildingRange::Building.new( number, entrance, street: @street )
-        ( b.marked_flats << flat ) and b
+        Building.new( "#{building}/#{flat}", street: @street )
       end
     end
     

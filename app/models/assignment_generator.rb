@@ -71,7 +71,7 @@ class AssignmentGenerator
     end
   
     def new_building_for flat, bld
-      b = BuildingRange::Building.new( bld.number, bld.entrance )
+      b = BuildingRange::Building.new( "#{bld.number}#{bld.entrance}" )
       b.marked_flats<<flat
       b
     end

@@ -3,7 +3,7 @@ require 'test_helper'
 class BuildingRangeTest < ActiveSupport::TestCase
   test "Regular section" do
     r = BuildingRange::Section.new "1-5"
-    buildings = [1,2,3,4,5].map{ |n| BuildingRange::Building.new( n ) }
+    buildings = [1,2,3,4,5].map{ |n| BuildingRange::Building.new( n.to_s ) }
     assert_equal buildings, r.buildings
   end
   
@@ -73,10 +73,10 @@ class BuildingRangeTest < ActiveSupport::TestCase
   
   test "even/odd section range" do
     r = BuildingRange::Section.new "1-5 odd"
-    buildings = [1,3,5].map{ |e| BuildingRange::Building.new( e ) }
+    buildings = [1,3,5].map{ |e| BuildingRange::Building.new( e.to_s ) }
     assert_equal buildings, r.buildings
     r = BuildingRange::Section.new "1-5 even"
-    buildings = [2,4].map{ |e| BuildingRange::Building.new( e ) }
+    buildings = [2,4].map{ |e| BuildingRange::Building.new( e.to_s ) }
     assert_equal buildings, r.buildings
   end
 
