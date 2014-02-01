@@ -5,12 +5,16 @@ class Campaign < ActiveRecord::Base
   has_many :assignment_lines, through: :assignments, source: :lines
   
   include Ranges
+
+  def ranges covered: true
+    grouped_ranges covered: covered
+  end
   
   # Returns ranges grouped by city and street
-  def ranges
+  def grouped_ranges covered: true
     grouped_lines.each do |city, streets|
       streets.each do |street, range_str|
-        streets[ street ] = BuildingRange.new( range_str, street: street )
+        streets[ street ] = create_range( range_str, street, covered)
       end
     end
   end
@@ -22,6 +26,16 @@ class Campaign < ActiveRecord::Base
       h
     end
   end
+  
+  def create_range str, street, covered
+    return BuildingRange.new( str, street: street ) if covered
+    
+    br = BuildingRange.new( str, street: street, fill_gaps: true)
+    br.drop_entirely_marked = true
+    br.switch_markings = true
+    br
+  end
+  private :create_range
   
   # # Returns buildings grouped by city and street
   # def buildings covered: true

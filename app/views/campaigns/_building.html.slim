@@ -9,7 +9,7 @@
 - else
   = building.building
 
-- if marked
+- if covered
   = " (partial)" if building.marked_flats.any? and building.unmarked_flats.any?
 - elsif building.unmarked_flats.any?
   = " (fl. #{building.unmarked_flats.join(', ')})"

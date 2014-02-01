@@ -1,16 +1,17 @@
 class BuildingRange
-  attr_reader :sort, :range_str, :last_error, :fill_gaps,
-              :splat, :switch_markings, :street
+  attr_reader :sort, :str, :last_error, :fill_gaps,
+              :splat, :switch_markings, :street,
+              :drop_entirely_marked
   
-  def initialize range_str = nil, street: nil, fill_gaps: false
-    self.range_str = range_str
+  def initialize str = nil, street: nil, fill_gaps: false
+    self.str = str
     @sort = true
     @street = street
     @fill_gaps = fill_gaps
   end
   
-  def range_str=( str )
-    @range_str = str.to_s.strip #.dup
+  def str=( str )
+    @str = str.to_s.strip #.dup
     reset
   end
   
@@ -34,6 +35,11 @@ class BuildingRange
     reset
   end
   
+  def drop_entirely_marked= value
+    @drop_entirely_marked = value
+    reset
+  end
+  
   def reset
     @last_error = nil
     @buildings = nil
@@ -47,9 +53,9 @@ class BuildingRange
     # "1 2/3a 3-5 even 6 4-7 odd 8"
     # To look like this:
     # "1, 2, 3-5 even, 6, 4-7 odd, 8"
-    @range_str.gsub! /(?<seq>\s\d)/i, ',\k<seq>'
+    @str.gsub! /(?<seq>\s\d)/i, ',\k<seq>'
     
-    @range_str.split( "," ).reject(&:blank?)
+    @str.split( "," ).reject(&:blank?)
   end
   
   def sections
@@ -95,6 +101,7 @@ class BuildingRange
     def prepare_buildings
       @buildings = grouped_buildings
       fill_building_gaps() if fill_gaps
+      drop_entirely_marked_buildings() if drop_entirely_marked
       switch_flat_markings() if switch_markings
       splat_flats() if splat
       @buildings.sort! if @sort
@@ -153,6 +160,10 @@ class BuildingRange
     def switch_flat_markings
       @buildings.each &:switch_markings
     end
+    
+    def drop_entirely_marked_buildings
+      @buildings.reject!(&:all_marked?)
+    end
 end
 
 
@@ -197,9 +208,9 @@ class BuildingRange
     end
     
     def building
-      bld = Building.new( "#{number}#{entrance}", street: @street )
-      flat ? bld.marked_flats << flat : bld.all_marked = true
-      bld
+      flat = "/#{self.flat}" if self.flat?
+      
+      Building.new( "#{number}#{entrance}#{flat}", street: @street )
     end
     
     def buildings
@@ -297,7 +308,7 @@ class BuildingRange
     end
     
     def marked_flats
-      @all_marked ? @marked_flats = SortedSet.new( all_flats ) : @marked_flats
+      all_marked ? @marked_flats = SortedSet.new( all_flats ) : @marked_flats
     end
     
     def unmarked_flats
@@ -309,8 +320,9 @@ class BuildingRange
     end
     
     def all_marked
-      @all_marked or
-      ( @street and flats? and marked_flats.size == highest_flat )
+      return true if @all_marked
+      return true if not flats?
+      return true if ( @street and @marked_flats.size == highest_flat )
     end
     alias :all_marked? :all_marked
     
@@ -323,6 +335,8 @@ class BuildingRange
       return "#{building}/#{marked_flats.first}" if marked_flats.one?
       
       flats = " (#{marked_flats.to_a.join(', ')})" if marked_flats.any?
+      flats = "" if all_marked?
+      
       "#{building}#{flats}"
     end
     
@@ -339,9 +353,9 @@ class BuildingRange
     end
     
     def merge buildings
+      @all_marked = ( all_marked? or buildings.any?(&:all_marked?) )
       other_flats = buildings.flat_map{ |bld| bld.marked_flats.to_a }
       marked_flats.merge other_flats
-      @all_marked = buildings.select(&:all_marked).any?
       
       self
     end

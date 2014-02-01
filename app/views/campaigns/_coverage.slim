@@ -1,26 +1,26 @@
 - entirely_uncovered = @campaign.entirely_uncovered_streets_by_city
 
-- @campaign.buildings(covered: covered).each do |city, streets|
+- @campaign.ranges(covered: covered).each do |city, streets|
   table.table.table-striped.table-bordered
     tr
       td colspan="3"
         strong= city.name
-    - streets.each do |street, buildings|
+    - streets.each do |street, range|
       tr
         td= street.name
-        td= render( partial: 'building', collection: buildings,
-            locals: { street: street, marked: marked,
-            buildings: buildings }) || "None."
-        td= "#{buildings.any? ? buildings.size : 'No'} buildings"
+        td= render( partial: 'building', collection: range.buildings,
+            locals: { street: street, covered: covered,
+            buildings: range.buildings }) || "None."
+        td= "#{range.buildings.any? ? range.buildings.size : 'No'} buildings"
     tr
       td
         strong= "#{streets.count} streets"
       td
       td
-        strong= "#{streets.map{ |s, blds | blds.count }.sum } buildings"
+        strong= "#{streets.map{ |s, range | range.buildings.count }.sum } buildings"
         
   
-  - if marked == false and entirely_uncovered.include? city
+  - if covered == false and entirely_uncovered.include? city
     p
       strong Entirely uncovered streets:
     p= entirely_uncovered[ city ].map(&:name).to_sentence

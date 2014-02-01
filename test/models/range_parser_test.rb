@@ -219,15 +219,14 @@ class BuildingRangeTest < ActiveSupport::TestCase
   test "Consider all flats marked if block without flats" do
     rp = BuildingRange.new "9-10, 10/6, 10/8"
     bld = rp.buildings.second
-    bld.all_marked = true
     assert_equal 8, bld.highest_flat
     assert_equal [1,2,3,4,5,6,7,8], bld.marked_flats.to_a
+    assert rp.buildings.all?(&:all_marked?)
   end
   
-  test "even after adding changing to 'all_marked' it records higher numbers" do
+  test "Even after adding changing to 'all_marked' it records higher numbers" do
     rp = BuildingRange.new "9-10, 10/6"
     bld = rp.buildings.second
-    bld.all_marked = true
     bld.marked_flats << 8
     assert_equal 8, bld.highest_flat
     assert_equal [1,2,3,4,5,6,7,8], bld.marked_flats.to_a
@@ -236,7 +235,7 @@ class BuildingRangeTest < ActiveSupport::TestCase
   test "Properly merges 'all_marked'" do
     rp = BuildingRange.new "10/6, 10, 10/3"
     bld = rp.buildings.first
-    assert true, bld.all_marked?
+    assert bld.all_marked?
     assert_equal SortedSet.new([*1..6]), bld.marked_flats
   end
   
