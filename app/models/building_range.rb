@@ -1,7 +1,6 @@
 class BuildingRange
   attr_reader :sort, :str, :last_error, :fill_gaps,
-              :splat, :switch_markings, :street,
-              :drop_entirely_marked
+              :splat, :switch_markings, :street
   
   def initialize str = nil, street: nil, fill_gaps: false
     self.str = str
@@ -32,11 +31,6 @@ class BuildingRange
   
   def switch_markings= value
     @switch_markings = value
-    reset
-  end
-  
-  def drop_entirely_marked= value
-    @drop_entirely_marked = value
     reset
   end
   
@@ -101,8 +95,7 @@ class BuildingRange
     def prepare_buildings
       @buildings = grouped_buildings
       fill_building_gaps() if fill_gaps
-      drop_entirely_marked_buildings() if drop_entirely_marked
-      switch_flat_markings() if switch_markings
+      switch_building_markings() if switch_markings
       splat_flats() if splat
       @buildings.sort! if @sort
     end
@@ -157,7 +150,8 @@ class BuildingRange
       @buildings.map!(&:splat).flatten!
     end
   
-    def switch_flat_markings
+    def switch_building_markings
+      drop_entirely_marked_buildings
       @buildings.each &:switch_markings
     end
     

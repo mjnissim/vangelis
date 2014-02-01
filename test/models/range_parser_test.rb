@@ -289,7 +289,7 @@ class BuildingRangeTest < ActiveSupport::TestCase
   test "Switch flat's markings" do
     rp = BuildingRange.new('3b/6 3b/4 3a')
     rp.switch_markings = true
-    str = "3a, 3b (1, 2, 3, 5)"
+    str = "3b (1, 2, 3, 5)"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
   end
   
@@ -297,7 +297,7 @@ class BuildingRangeTest < ActiveSupport::TestCase
     rp = BuildingRange.new('3b/6 3b/4 3a')
     rp.splat = true
     rp.switch_markings = true
-    str = "3a, 3b/1, 3b/2, 3b/3, 3b/5"
+    str = "3b/1, 3b/2, 3b/3, 3b/5"
     assert_equal str, rp.buildings.map(&:to_s).join(", ")
   end
 end
