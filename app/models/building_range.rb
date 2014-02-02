@@ -121,7 +121,9 @@ class BuildingRange
         highest_entrance = entrances.max
         missing_entrances = [*"a"..highest_entrance] - entrances
         missing_entrances.each do |entrance|
-          @buildings << Building.new( "#{number}#{entrance}", street: @street )
+          bld = Building.new( "#{number}#{entrance}", street: @street )
+          bld.all_marked = false
+          @buildings << bld
         end
       end
     end
@@ -129,7 +131,9 @@ class BuildingRange
     def fill_numbers
       missing_numbers = all_possible_building_numbers - building_numbers
       missing_blds = missing_numbers.map do |number|
-        Building.new( number.to_s, street: @street )
+        bld = Building.new( number.to_s, street: @street )
+        bld.all_marked = false
+        bld
       end
       @buildings.concat missing_blds
     end
@@ -151,8 +155,8 @@ class BuildingRange
     end
   
     def switch_building_markings
-      drop_entirely_marked_buildings
       @buildings.each &:switch_markings
+      drop_entirely_marked_buildings
     end
     
     def drop_entirely_marked_buildings
@@ -314,7 +318,9 @@ class BuildingRange
     end
     
     def all_marked
-      return true if @all_marked
+      # Think thrice before changing the next line:
+      return @all_marked unless @all_marked.nil?
+      
       return true if not flats?
       return true if ( @street and @marked_flats.size == highest_flat )
     end
@@ -379,6 +385,7 @@ class BuildingRange
     def initialize buildings, even_odd: false
       @buildings = buildings
       @bld_arrays = []
+      @even_odd = even_odd
       even_odd ? set_even_odd : set_regular
     end
     
@@ -435,9 +442,13 @@ class BuildingRange
     end
     
     def arrays_to_strings
-      @bld_arrays.map do |ar|
+      @bld_arrays.sort_by{ |ar| ar.first.number }.map do |ar|
         s = "#{ar.first}"
-        s << ( ar.many? ? "-#{ ar.last.number }" : '')
+        if ar.many?
+          s += "-#{ ar.last.number }"
+          s += (ar.first.number.even? ? ' even' : ' odd') if @even_odd
+        end
+        s
       end
     end
   end

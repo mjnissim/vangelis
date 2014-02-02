@@ -279,18 +279,18 @@ class BuildingRangeTest < ActiveSupport::TestCase
   end
   
   test "splat flats without sort (but sort flats internally)" do
-    rp = BuildingRange.new('3b/6 3b/4 3a')
-    rp.sort = false
-    rp.splat = true
+    br = BuildingRange.new('3b/6 3b/4 3a')
+    br.sort = false
+    br.splat = true
     str = "3b/4, 3b/6, 3a"
-    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+    assert_equal str, br.buildings.map(&:to_s).join(", ")
   end
   
   test "Switch flat's markings" do
-    rp = BuildingRange.new('3b/6 3b/4 3a')
-    rp.switch_markings = true
+    br = BuildingRange.new('3b/6 3b/4 3a')
+    br.switch_markings = true
     str = "3b (1, 2, 3, 5)"
-    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+    assert_equal str, br.buildings.map(&:to_s).join(", ")
   end
   
   test "Switch flat's markings and splat flats" do

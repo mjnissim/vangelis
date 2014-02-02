@@ -31,7 +31,6 @@ class Campaign < ActiveRecord::Base
     return BuildingRange.new( str, street: street ) if covered
     
     br = BuildingRange.new( str, street: street, fill_gaps: true)
-    br.drop_entirely_marked = true
     br.switch_markings = true
     br
   end

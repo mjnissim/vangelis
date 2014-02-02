@@ -1,6 +1,6 @@
 - entirely_uncovered = @campaign.entirely_uncovered_streets_by_city
 
-- @campaign.ranges(covered: covered).each do |city, streets|
+- @campaign.ranges( covered: covered ).each do |city, streets|
   table.table.table-striped.table-bordered
     tr
       td colspan="3"
@@ -8,9 +8,10 @@
     - streets.each do |street, range|
       tr
         td= street.name
-        td= render( partial: 'building', collection: range.buildings,
-            locals: { street: street, covered: covered,
-            buildings: range.buildings }) || "None."
+        td= range.to_str( even_odd: true )
+        / td= render( partial: 'building', collection: range.buildings,
+        /     locals: { street: street, covered: covered,
+        /     buildings: range.buildings }) || "None."
         td= "#{range.buildings.any? ? range.buildings.size : 'No'} buildings"
     tr
       td
