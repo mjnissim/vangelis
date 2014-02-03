@@ -1,24 +1,28 @@
-- entirely_uncovered = @campaign.entirely_uncovered_streets_by_city
+- entirely_uncovered = @campaign.entirely_uncovered_streets
 
 - @campaign.ranges( covered: covered ).each do |city, streets|
   table.table.table-striped.table-bordered
     tr
       td colspan="3"
         strong= city.name
+    - streets = Hash[ streets.sort_by{ |a| a.first.name } ]
     - streets.each do |street, range|
       tr
         td= street.name
-        td= range.to_str( even_odd: true )
-        / td= render( partial: 'building', collection: range.buildings,
-        /     locals: { street: street, covered: covered,
-        /     buildings: range.buildings }) || "None."
-        td= "#{range.buildings.any? ? range.buildings.size : 'No'} buildings"
+        
+        td= render( 'building', range: range ) || "None."
+              
+        td
+          = "#{ range.residence_count } residences in "
+          = "#{ range.buildings.any? ? range.buildings.size : 'No'} buildings"
     tr
       td
         strong= "#{streets.count} streets"
       td
       td
-        strong= "#{streets.map{ |s, range | range.buildings.count }.sum } buildings"
+        strong
+          ="#{streets.map{|s,range|range.residence_count}.sum} residences in "
+          ="#{streets.map{|s, range | range.buildings.count }.sum } buildings"
         
   
   - if covered == false and entirely_uncovered.include? city

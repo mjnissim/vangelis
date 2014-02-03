@@ -1,6 +1,7 @@
 class BuildingRange
   attr_reader :sort, :str, :last_error, :fill_gaps,
               :splat, :switch_markings, :street
+  alias :switch_markings? :switch_markings
   
   def initialize str = nil, street: nil, fill_gaps: false
     self.str = str
@@ -88,6 +89,20 @@ class BuildingRange
   
   def ungrouped_buildings
     sections.flat_map(&:buildings)
+  end
+  
+  def residence_count
+    buildings.map do |bld|
+      bld.flats? ? bld.marked_flats.count : 1
+    end.sum
+  end
+  
+  def except_last
+    buildings[0...-1]
+  end
+  
+  def last
+    buildings.last
   end
   
   private
@@ -376,16 +391,33 @@ class BuildingRange
       
       marked_flats.replace unmarked_flats
     end
+    
+    # Determines whether this building is known to be last on the street
+    # or whether this is unknown yet.
+    def unconfirmed_last?
+      return true if @street.nil?
+      
+      not @street.high_building? and ( self == street.buildings.last )
+    end
+    
+    def last_on_street?
+      self == @street.buildings.last
+    end
+    
+    def partially_marked?
+      marked_flats.any? and not all_marked?
+    end
   end
   # end of class Building
 end
 
 class BuildingRange
   class ConciseString
-    def initialize buildings, even_odd: false
+    def initialize buildings, even_odd: false, show_flats: false
       @buildings = buildings
       @bld_arrays = []
       @even_odd = even_odd
+      @show_flats = show_flats
       even_odd ? set_even_odd : set_regular
     end
     
@@ -443,7 +475,13 @@ class BuildingRange
     
     def arrays_to_strings
       @bld_arrays.sort_by{ |ar| ar.first.number }.map do |ar|
-        s = "#{ar.first}"
+        
+        if ar.first.partially_marked? and not @show_flats
+          s = "#{ar.first.building}(½)"
+        else
+          s = "#{ar.first}"
+        end
+        
         if ar.many?
           s += "-#{ ar.last.number }"
           s += (ar.first.number.even? ? ' even' : ' odd') if @even_odd
