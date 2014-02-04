@@ -78,8 +78,9 @@ class BuildingRange
   alias :to_a :buildings
   
   # Sorts buildings without regard to whether 'sort' is set to true or false.
-  def to_str even_odd: false
-    cs = ConciseString.new( buildings, even_odd: even_odd ).str
+  def to_str even_odd: false, show_flats: false
+    cs = ConciseString.new( buildings, even_odd: even_odd,
+      show_flats: show_flats ).str
   end
   
   def [] (building)
@@ -124,6 +125,8 @@ class BuildingRange
     end
     
     def fill_building_gaps
+      # TODO: fill_gaps should use street information!
+      # perhaps here: fill_from_street
       fill_entrances
       fill_numbers
     end

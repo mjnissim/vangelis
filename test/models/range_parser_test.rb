@@ -262,13 +262,13 @@ class BuildingRangeTest < ActiveSupport::TestCase
   test "Concise String works" do
     rp = BuildingRange.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
     str = "1a, 2-8, 8a, 9/12, 10-16, 18-20"
-    assert_equal str, rp.to_str
+    assert_equal str, rp.to_str(show_flats: true)
   end
   
   test "Concise String works with even odd" do
     rp = BuildingRange.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
-    str = "1a, 3-7, 9/12, 11-15, 19, 2-8, 8a, 10-20"
-    assert_equal str, rp.to_str( even_odd: true )
+    str = "1a, 2-8 even, 3-7 odd, 8a, 9/12, 10-20 even, 11-15 odd, 19"
+    assert_equal str, rp.to_str( even_odd: true, show_flats: true )
   end
   
   test "splat flats" do

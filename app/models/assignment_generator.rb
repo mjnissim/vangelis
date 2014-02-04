@@ -10,6 +10,7 @@ class AssignmentGenerator
   
   def largest_chunk
     return @largest_chunk if @largest_chunk
+    
     @largest_chunk = grouped_by_building.map(&:size).max
     @largest_chunk ||= 1
   end
@@ -25,8 +26,10 @@ class AssignmentGenerator
   end
   
   def uncovered_buildings
-    blds = @campaign.buildings(covered: false)
-    blds[@street.city][@street]
+    ranges = @campaign.buildings(covered: false)
+    blds = ranges[@street.city][@street]
+    blds
+    blds
   end
   
   
@@ -64,18 +67,7 @@ class AssignmentGenerator
       transpose_by_largest_chunk
       recombine_non_flats
     end
-  
-    def new_buildings_for_flats flats, bld
-      return bld if flats.none?
-      flats.map{ |flat| new_building_for flat, bld }
-    end
-  
-    def new_building_for flat, bld
-      b = BuildingRange::Building.new( "#{bld.number}#{bld.entrance}" )
-      b.marked_flats<<flat
-      b
-    end
-  
+    
     def sort_by_largest_chunk
       @flats = grouped_by_building.sort{ |a,b| b.size <=> a.size }.flatten
     end
