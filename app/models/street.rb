@@ -44,14 +44,14 @@ class Street < ActiveRecord::Base
     streets.uniq
   end
   
-  def covered_ranges
+  def ranges
     assignment_lines.map{ |al| al.numbers }.join( ", " )
   end
   
   def buildings
     return @buildings if @buildings
     
-    rp = BuildingRange.new( covered_ranges )
+    rp = BuildingRange.new( ranges )
     @buildings = rp if rp.parses?
   end
   
@@ -59,7 +59,7 @@ class Street < ActiveRecord::Base
   def all_buildings
     return @all_buildings if @all_buildings
     
-    @all_buildings = BuildingRange.new( covered_ranges, fill_gaps: true )
+    @all_buildings = BuildingRange.new( ranges, fill_gaps: true )
   end
   
   before_save do

@@ -6,23 +6,19 @@ class Campaign < ActiveRecord::Base
   
   include Ranges
 
-  def ranges covered: true
-    grouped_ranges covered: covered
-  end
-  
   # Returns ranges grouped by city and street
-  def grouped_ranges covered: true
+  def ranges covered: true
     grouped_lines.each do |city, streets|
       streets.each do |street, range_str|
         streets[ street ] = create_range( range_str, street, covered)
       end
     end
   end
-  
+    
   def grouped_lines
     assignment_lines.reduce( {} ) do |h, line|
       h[ line.city ] ||= Hash.new( "" )
-      h[ line.city ][ line.street ] += ", #{line.numbers}"
+      h[ line.city ][ line.street ] += "  #{line.numbers}"
       h
     end
   end

@@ -29,7 +29,6 @@ class AssignmentGenerator
     ranges = @campaign.buildings(covered: false)
     blds = ranges[@street.city][@street]
     blds
-    blds
   end
   
   

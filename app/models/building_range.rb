@@ -70,13 +70,14 @@ class BuildingRange
   end
   
   def buildings
-    return @buildings.dup if @buildings
+    return Marshal.load( Marshal.dump(@buildings) ) if @buildings
     
     prepare_buildings
     buildings
   end
   alias :to_a :buildings
   
+  # Produces concise representation string.
   # Sorts buildings without regard to whether 'sort' is set to true or false.
   def to_str even_odd: false, show_flats: false
     cs = ConciseString.new( buildings, even_odd: even_odd,
@@ -125,47 +126,7 @@ class BuildingRange
     end
     
     def fill_building_gaps
-      # TODO: fill_gaps should use street information!
-      # perhaps here: fill_from_street
-      fill_entrances
-      fill_numbers
-    end
-  
-    def fill_entrances
-      missing_blds = []
-      by_number = buildings_with_entrances.group_by(&:number)
-      by_number.each do |number, buildings|
-        entrances = buildings.map(&:entrance)
-        highest_entrance = entrances.max
-        missing_entrances = [*"a"..highest_entrance] - entrances
-        missing_entrances.each do |entrance|
-          bld = Building.new( "#{number}#{entrance}", street: @street )
-          bld.all_marked = false
-          @buildings << bld
-        end
-      end
-    end
-  
-    def fill_numbers
-      missing_numbers = all_possible_building_numbers - building_numbers
-      missing_blds = missing_numbers.map do |number|
-        bld = Building.new( number.to_s, street: @street )
-        bld.all_marked = false
-        bld
-      end
-      @buildings.concat missing_blds
-    end
-    
-    def building_numbers
-      @buildings.map(&:number)
-    end
-    
-    def all_possible_building_numbers
-      [*1..@buildings.max.number]
-    end
-    
-    def buildings_with_entrances
-      @buildings.select(&:entrance?)
+      BuildingsFiller.new( @buildings, @street )
     end
   
     def splat_flats
@@ -414,6 +375,71 @@ class BuildingRange
   # end of class Building
 end
 
+
+class BuildingRange
+  class BuildingsFiller
+    def initialize buildings, street
+      @street = street
+      @buildings = buildings
+      fill_building_gaps
+    end
+    
+    def fill_building_gaps
+      fill_from_street if @street
+      fill_entrances
+      fill_numbers
+    end
+    
+    def fill_from_street
+      street_blds = @street.buildings.to_a.map(&:building)
+      my_blds = @buildings.map(&:building)
+      diff_blds = street_blds - my_blds
+      
+      diff_blds.map!{ |bld| empty_building_for( bld ) }
+      @buildings.concat diff_blds
+    end
+    
+    def fill_entrances
+      by_number = buildings_with_entrances.group_by(&:number)
+      by_number.each do |number, buildings|
+        entrances = buildings.map(&:entrance)
+        highest_entrance = entrances.max
+        missing_entrances = [*"a"..highest_entrance] - entrances
+        missing_entrances.each do |entrance|
+          @buildings << empty_building_for( "#{number}#{entrance}" )
+        end
+      end
+    end
+  
+    def fill_numbers
+      missing_numbers = all_possible_building_numbers - building_numbers
+      missing_blds = missing_numbers.map do |number|
+        empty_building_for( number.to_s )
+      end
+      @buildings.concat missing_blds
+    end
+    
+    def building_numbers
+      @buildings.map(&:number)
+    end
+    
+    def all_possible_building_numbers
+      [*1..@buildings.max.number]
+    end
+    
+    def buildings_with_entrances
+      @buildings.select(&:entrance?)
+    end
+    
+    def empty_building_for building
+      bld = Building.new( building, street: @street )
+      bld.all_marked = false
+      bld
+    end
+  end
+end
+
+
 class BuildingRange
   class ConciseString
     def initialize buildings, even_odd: false, show_flats: false
@@ -493,4 +519,5 @@ class BuildingRange
       end
     end
   end
+  # end of class ConciseString
 end
