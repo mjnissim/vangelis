@@ -49,17 +49,12 @@ class Street < ActiveRecord::Base
   end
   
   def buildings
-    return @buildings if @buildings
-    
-    rp = Buildings.new( ranges )
-    @buildings = rp if rp.parses?
+    @buildings ||= Buildings.new( ranges )
   end
   
   # Returns all possible buildings, including unreported buildings.
   def all_buildings
-    return @all_buildings if @all_buildings
-    
-    @all_buildings = Buildings.new( ranges, fill_gaps: true )
+    @all_buildings ||= Buildings.new( ranges, fill_gaps: true )
   end
   
   before_save do
