@@ -24,9 +24,9 @@ class Campaign < ActiveRecord::Base
   end
   
   def create_range str, street, covered
-    return BuildingRange.new( str, street: street ) if covered
+    return Buildings.new( str, street: street ) if covered
     
-    br = BuildingRange.new( str, street: street, fill_gaps: true)
+    br = Buildings.new( str, street: street, fill_gaps: true)
     br.switch_markings = true
     br
   end

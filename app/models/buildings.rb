@@ -1,4 +1,4 @@
-class BuildingRange
+class Buildings
   attr_reader :sort, :str, :last_error, :fill_gaps,
               :splat, :switch_markings, :street
   alias :switch_markings? :switch_markings
@@ -80,13 +80,13 @@ class BuildingRange
   # Produces concise representation string.
   # Sorts buildings without regard to whether 'sort' is set to true or false.
   def to_str even_odd: false, show_flats: false
-    cs = ConciseString.new( buildings, even_odd: even_odd,
+    ConciseString.new( buildings, even_odd: even_odd,
       show_flats: show_flats ).str
   end
   
   def [] (building)
     return buildings.find{ |bld| bld == building } if building.is_a? Building
-    buildings.find{ |bld| bld.building == building }
+    buildings.find{ |bld| bld.address == building }
   end
   
   def ungrouped_buildings
@@ -118,8 +118,8 @@ class BuildingRange
     end
   
     def grouped_buildings
-      grouped = ungrouped_buildings.group_by(&:building)
-      grouped.map do |building, buildings|
+      grouped = ungrouped_buildings.group_by(&:address)
+      grouped.map do |address, buildings|
         other_buildings = buildings.drop( 1 )
         buildings.first.merge( other_buildings )
       end
@@ -144,7 +144,7 @@ class BuildingRange
 end
 
 
-class BuildingRange
+class Buildings
   class Section
     attr_reader :str, :street
     
@@ -244,20 +244,20 @@ class BuildingRange
 end
 
 
-class BuildingRange
+class Buildings
   class Building
     attr_reader :number, :entrance, :street
     attr_writer :all_marked
     
-    def initialize str, street: street
+    def initialize address, street: street
       @street = street
       @marked_flats = SortedSet.new
-      initialize_from_string str
+      initialize_from_string address
     end
     
-    def initialize_from_string str
-      sec = Section.new( str )
-      raise "Cannot initialize building from #{str}" unless sec.building?
+    def initialize_from_string address
+      sec = Section.new( address )
+      raise "Cannot initialize building from #{address}" unless sec.building?
       
       @number = sec.number
       @entrance = sec.entrance
@@ -306,21 +306,21 @@ class BuildingRange
     alias :all_marked? :all_marked
     
     
-    def building
+    def address
       "#{number}#{entrance}"
     end
     
     def to_s
-      return "#{building}/#{marked_flats.first}" if marked_flats.one?
+      return "#{address}/#{marked_flats.first}" if marked_flats.one?
       
       flats = " (#{marked_flats.to_a.join(', ')})" if marked_flats.any?
       flats = "" if all_marked?
       
-      "#{building}#{flats}"
+      "#{address}#{flats}"
     end
     
     def ==( other )
-      building==other.building
+      address==other.address
     end
     
     def <=>( other )
@@ -343,7 +343,7 @@ class BuildingRange
       return [self] if marked_flats.none?
       
       marked_flats.map do |flat|
-        Building.new( "#{building}/#{flat}", street: @street )
+        Building.new( "#{address}/#{flat}", street: @street )
       end
     end
     
@@ -376,8 +376,10 @@ class BuildingRange
 end
 
 
-class BuildingRange
+class Buildings
+  # Service class for filling gaps in building ranges.
   class BuildingsFiller
+    
     def initialize buildings, street
       @street = street
       @buildings = buildings
@@ -391,8 +393,8 @@ class BuildingRange
     end
     
     def fill_from_street
-      street_blds = @street.buildings.to_a.map(&:building)
-      my_blds = @buildings.map(&:building)
+      street_blds = @street.buildings.to_a.map(&:address)
+      my_blds = @buildings.map(&:address)
       diff_blds = street_blds - my_blds
       
       diff_blds.map!{ |bld| empty_building_for( bld ) }
@@ -431,8 +433,8 @@ class BuildingRange
       @buildings.select(&:entrance?)
     end
     
-    def empty_building_for building
-      bld = Building.new( building, street: @street )
+    def empty_building_for address
+      bld = Building.new( address, street: @street )
       bld.all_marked = false
       bld
     end
@@ -440,7 +442,7 @@ class BuildingRange
 end
 
 
-class BuildingRange
+class Buildings
   class ConciseString
     def initialize buildings, even_odd: false, show_flats: false
       @buildings = buildings
@@ -506,7 +508,7 @@ class BuildingRange
       @bld_arrays.sort_by{ |ar| ar.first.number }.map do |ar|
         
         if ar.first.partially_marked? and not @show_flats
-          s = "#{ar.first.building}(½)"
+          s = "#{ar.first.address}(½)"
         else
           s = "#{ar.first}"
         end

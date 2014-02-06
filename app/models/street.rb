@@ -51,7 +51,7 @@ class Street < ActiveRecord::Base
   def buildings
     return @buildings if @buildings
     
-    rp = BuildingRange.new( ranges )
+    rp = Buildings.new( ranges )
     @buildings = rp if rp.parses?
   end
   
@@ -59,7 +59,7 @@ class Street < ActiveRecord::Base
   def all_buildings
     return @all_buildings if @all_buildings
     
-    @all_buildings = BuildingRange.new( ranges, fill_gaps: true )
+    @all_buildings = Buildings.new( ranges, fill_gaps: true )
   end
   
   before_save do

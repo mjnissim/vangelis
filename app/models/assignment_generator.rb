@@ -5,7 +5,7 @@ class AssignmentGenerator
     @campaign, @street, @amount, @residences_each =
       campaign, street, amount.to_i, residences_each.to_i
     @residences = uncovered_flats
-    generate
+    # generate
   end
   
   def largest_chunk
@@ -20,15 +20,15 @@ class AssignmentGenerator
   end
   
   def uncovered_flats
-    uncovered_buildings.flat_map do |bld|
-      new_buildings_for_flats( bld.unmarked_flats, bld )
-    end
+    rng = uncovered_range
+    rng.splat = true
+    rng.buildings.select!(&:flats?)
+    rng
   end
   
-  def uncovered_buildings
-    ranges = @campaign.buildings(covered: false)
-    blds = ranges[@street.city][@street]
-    blds
+  def uncovered_range
+    ranges = @campaign.ranges(covered: false)
+    ranges[@street.city][@street]
   end
   
   
@@ -50,14 +50,14 @@ class AssignmentGenerator
     
     def assignment_from_group grp
       buildings = grp.map do |bld| 
-        s = bld.building 
+        s = bld.address 
         s << ( bld.marked_flats.any? ? "/#{bld.marked_flats.first}" : "" )
       end
       "#{ @street.name } #{ buildings.join(", ") }"
     end
     
     def grouped_by_building
-      @flats.group_by(&:building).values
+      @flats.group_by(&:address).values
     end
   
     def smart_shuffle

@@ -4,6 +4,6 @@ module Ranges
   end
   
   def to_building_range assignment_lines
-    BuildingRange.new( to_range( assignment_lines ) )
+    Buildings.new( to_range( assignment_lines ) )
   end
 end

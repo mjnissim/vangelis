@@ -11,9 +11,9 @@
     = link_to_confirm_high_number( building )
   - elsif building.last_on_street?
     strong
-      = building.building
+      = building.address
   - else
-    = building.building
+    = building.address
 
   - if building.partially_marked?
     small= "(½)" 
