@@ -69,11 +69,12 @@ class Buildings
     false
   end
   
-  def buildings
-    return Marshal.load( Marshal.dump(@buildings) ) if @buildings
+  def buildings copy: false
+    prepare_buildings if @buildings.nil?
     
-    prepare_buildings
-    buildings
+    return Marshal.load( Marshal.dump( @buildings ) ) if copy
+    
+    @buildings
   end
   alias :to_a :buildings
   
@@ -84,13 +85,9 @@ class Buildings
       show_flats: show_flats ).str
   end
   
-  def [] (building)
+  def [] ( building )
     return buildings.find{ |bld| bld == building } if building.is_a? Building
     buildings.find{ |bld| bld.address == building }
-  end
-  
-  def ungrouped_buildings
-    sections.flat_map(&:buildings)
   end
   
   def residence_count
@@ -119,12 +116,17 @@ class Buildings
   
     def grouped_buildings
       grouped = ungrouped_buildings.group_by(&:address)
-      grouped.map do |address, buildings|
-        other_buildings = buildings.drop( 1 )
-        buildings.first.merge( other_buildings )
+      grouped.map do |address, blds|
+        other_blds = blds.drop( 1 )
+        blds.first.merge( other_blds )
+        blds.first
       end
     end
     
+    def ungrouped_buildings
+      sections.flat_map(&:buildings)
+    end
+
     def fill_building_gaps
       BuildingsFiller.new( @buildings, @street )
     end
@@ -186,8 +188,9 @@ class Buildings
     
     def building
       flat = "/#{self.flat}" if self.flat?
-      
-      Building.new( "#{number}#{entrance}#{flat}", street: @street )
+      s = "#{number}#{entrance}#{flat}"
+
+      Building.new( s, street: @street )
     end
     
     def buildings
@@ -196,7 +199,7 @@ class Buildings
       ar = *low..high
       ar.select!{ |n| n.send "#{even_odd}?" } if even_odd?
       
-      ar.map{ |num| Building.new( num.to_s, street: @street ) }
+      ar.map{|num| Building.new( num.to_s, street: @street )}
     end
     
     # Returns "even", "odd", or nil.
@@ -249,8 +252,9 @@ class Buildings
     attr_reader :number, :entrance, :street
     attr_writer :all_marked
     
-    def initialize address, street: street
+    def initialize address, street: street, all_marked: nil
       @street = street
+      @all_marked = all_marked
       @marked_flats = SortedSet.new
       initialize_from_string address
     end
@@ -270,18 +274,17 @@ class Buildings
     end
     
     # Returns number of flats, or nil.
-    def highest_flat
-      from_street = @street.buildings[ self ].try( :highest_flat ) if @street
+    def highest_flat check_street: true
+      if @street and check_street
+        from_street = @street.buildings[ self ].try( :highest_flat )
+      end
 
       [from_street, @highest_flat, @marked_flats.max].compact.max
     end
+    alias :flats? :highest_flat
     
     def highest_flat=( num )
       @highest_flat = [@highest_flat, num].compact.max
-    end
-    
-    def flats?
-      highest_flat.present?
     end
     
     def marked_flats
@@ -300,8 +303,13 @@ class Buildings
       # Think thrice before changing the next line:
       return @all_marked unless @all_marked.nil?
       
-      return true if not flats?
-      return true if ( @street and @marked_flats.size == highest_flat )
+      # If ever a building is reported without flats, that is an
+      # Explicit way of saying it's entirely marked. Therefore you
+      # actually Shouldn't check street information to find out whether
+      # it's got flats or not.
+      return true if not flats?( check_street: false )
+      
+      return true if ( @street and ( @marked_flats.size == highest_flat ) )
     end
     alias :all_marked? :all_marked
     
@@ -340,8 +348,6 @@ class Buildings
     end
     
     def splat
-      return [self] if marked_flats.none?
-      
       marked_flats.map do |flat|
         Building.new( "#{address}/#{flat}", street: @street )
       end
@@ -434,9 +440,7 @@ class Buildings
     end
     
     def empty_building_for address
-      bld = Building.new( address, street: @street )
-      bld.all_marked = false
-      bld
+      Building.new( address, street: @street, all_marked: false )
     end
   end
 end

@@ -4,7 +4,7 @@ class AssignmentGenerator
   def initialize campaign, street, amount, residences_each
     @campaign, @street, @amount, @residences_each =
       campaign, street, amount.to_i, residences_each.to_i
-    @residences = uncovered_flats
+    # @residences = uncovered_flats
     # generate
   end
   
@@ -22,12 +22,11 @@ class AssignmentGenerator
   def uncovered_flats
     rng = uncovered_range
     rng.splat = true
-    rng.buildings.select!(&:flats?)
-    rng
+    @residences = rng.buildings
   end
   
   def uncovered_range
-    ranges = @campaign.ranges(covered: false)
+    ranges = @campaign.ranges( covered: false, street: @street )
     ranges[@street.city][@street]
   end
   

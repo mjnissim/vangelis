@@ -7,7 +7,7 @@ class Campaign < ActiveRecord::Base
   include Ranges
 
   # Returns ranges grouped by city and street
-  def ranges covered: true
+  def ranges covered: true, street: nil
     grouped_lines.each do |city, streets|
       streets.each do |street, range_str|
         streets[ street ] = create_range( range_str, street, covered)
@@ -15,12 +15,18 @@ class Campaign < ActiveRecord::Base
     end
   end
     
-  def grouped_lines
-    assignment_lines.reduce( {} ) do |h, line|
+  def grouped_lines street: nil
+    lines_for( street ).reduce( {} ) do |h, line|
       h[ line.city ] ||= Hash.new( "" )
       h[ line.city ][ line.street ] += "  #{line.numbers}"
       h
     end
+  end
+  
+  def lines_for street
+    return assignment_lines unless street
+    
+    assignment_lines.where( street: street )
   end
   
   def create_range str, street, covered

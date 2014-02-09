@@ -262,35 +262,42 @@ class BuildingsTest < ActiveSupport::TestCase
   test "Concise String works" do
     rp = Buildings.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
     str = "1a, 2-8, 8a, 9/12, 10-16, 18-20"
-    assert_equal str, rp.to_str(show_flats: true)
+    assert_equal( str, rp.to_str(show_flats: true) )
   end
   
   test "Concise String works with even odd" do
     rp = Buildings.new('1a 2 3 4 5 6 7 8 8a 9/12 10 11 12 13 14 15 16 18-20')
     str = "1a, 2-8 even, 3-7 odd, 8a, 9/12, 10-20 even, 11-15 odd, 19"
-    assert_equal str, rp.to_str( even_odd: true, show_flats: true )
+    assert_equal( str, rp.to_str( even_odd: true, show_flats: true ) )
   end
   
   test "splat flats" do
     rp = Buildings.new('3b/6, 3b/4, 3a')
     rp.splat = true
-    str = "3a, 3b/4, 3b/6"
-    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+    str = "3b/4, 3b/6"
+    assert_equal( str, rp.buildings.map(&:to_s).join(", ") )
   end
   
   test "splat flats without sort (but sort flats internally)" do
-    br = Buildings.new('3b/6 3b/4 3a')
+    br = Buildings.new('3b/6 3b/4 3a/7')
     br.sort = false
     br.splat = true
-    str = "3b/4, 3b/6, 3a"
-    assert_equal str, br.buildings.map(&:to_s).join(", ")
+    str = "3b/4, 3b/6, 3a/7"
+    assert_equal( str, br.buildings.map(&:to_s).join(", ") )
   end
   
   test "Switch flat's markings" do
     br = Buildings.new('3b/6 3b/4 3a')
     br.switch_markings = true
     str = "3b (1, 2, 3, 5)"
-    assert_equal str, br.buildings.map(&:to_s).join(", ")
+    assert_equal( str, br.buildings.map(&:to_s).join(", ") )
+  end
+  
+  test "Individual flats and whole blocks marked" do
+    br = Buildings.new('91/1 91/2 91')
+    br.switch_markings = true
+    br.splat = true
+    assert_equal( "", br.buildings.map(&:to_s).join(", ") )
   end
   
   test "Switch flat's markings and splat flats" do
@@ -298,6 +305,6 @@ class BuildingsTest < ActiveSupport::TestCase
     rp.splat = true
     rp.switch_markings = true
     str = "3b/1, 3b/2, 3b/3, 3b/5"
-    assert_equal str, rp.buildings.map(&:to_s).join(", ")
+    assert_equal( str, rp.buildings.map(&:to_s).join(", ") )
   end
 end
