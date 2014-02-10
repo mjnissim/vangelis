@@ -9,7 +9,7 @@ module StreetsHelper
   
   def all_buildings_except_last range
     cs = Buildings::ConciseString.new( range.except_last,
-      even_odd: range.switch_markings? )
+      even_odd: range.switch_markings?, show_flats: range.switch_markings? )
     cs.str
   end
 end
