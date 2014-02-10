@@ -1,4 +1,8 @@
 class NameGenerator
+  def self.generate
+    new.generate
+  end
+  
   def generate
     rand_string( length: 2 ) + rand_number( digits: 2 ).to_s
   end

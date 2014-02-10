@@ -4,8 +4,6 @@ class Campaign < ActiveRecord::Base
   has_many :assignments, dependent: :destroy
   has_many :assignment_lines, through: :assignments, source: :lines
   
-  include Ranges
-
   # Returns ranges grouped by city and street
   def ranges covered: true, street: nil
     grouped_lines.each do |city, streets|
