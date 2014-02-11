@@ -96,6 +96,10 @@ class Buildings
     end.sum
   end
   
+  def flat_count
+    buildings.map { |bld| bld.marked_flats.count }.sum
+  end
+  
   def except_last
     buildings[0...-1]
   end

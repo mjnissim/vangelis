@@ -4,9 +4,7 @@ div class="page-header"
 = form_tag generate_assignments_url do
 
   = label_tag :street, "Please select street:"
-  = select_tag :street_id,
-    option_groups_from_collection_for_select(current_campaign.cities,
-    :streets, :name, :id, :name)
+  = street_select_with_uncovered_flats
 
   = label_tag :amount, "How many assignment to generate?"
   = number_field_tag :amount, 1, :in => 1..10
