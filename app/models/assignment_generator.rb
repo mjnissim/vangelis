@@ -8,11 +8,9 @@ class AssignmentGenerator
     generate
   end
   
-  def largest_chunk
-    return @largest_chunk if @largest_chunk
-    
-    @largest_chunk = grouped_by_building.map(&:size).max
-    @largest_chunk ||= 1
+  def largest_chunk ar
+    num = grouped_by_building( ar ).map(&:size).max
+    num ||= 1
   end
   
   def amount_of_residences
@@ -51,22 +49,31 @@ class AssignmentGenerator
       "#{ @street.name } #{ grp.join(", ") }"
     end
     
-    def grouped_by_building
-      @residences.group_by(&:address).values
+    def grouped_by_building ar
+      ar.group_by(&:address).values
     end
   
     def smart_shuffle
-      sort_by_largest_chunk
-      transpose_by_largest_chunk
+      even_odds = grouped_by_even_odd.map do |ar|
+        ar = sort_by_largest_chunk( ar )
+        transpose_by_largest_chunk( ar )
+      end
+      
+      @residences = even_odds.flatten
     end
     
-    def sort_by_largest_chunk
-      @residences = grouped_by_building.sort{ |a,b| b.size <=> a.size }.flatten
+    def grouped_by_even_odd
+      ar = @residences.partition{ |bld| bld.number.even? }
+      ar.sort_by(&:size).reverse
+    end
+    
+    def sort_by_largest_chunk ar
+      grouped_by_building( ar ).sort{ |a,b| b.size <=> a.size }.flatten
     end
   
-    def transpose_by_largest_chunk
-      @residences = @residences.in_groups_of( largest_chunk )
-      @residences = @residences.transpose.flatten.compact
+    def transpose_by_largest_chunk ar
+      ar2 = ar.in_groups_of( largest_chunk( ar ) )
+      ar2.transpose.flatten.compact
     end
     
     def internally_sort_groups
