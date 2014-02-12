@@ -5,7 +5,6 @@ module CampaignsHelper
   
   def street_select_with_uncovered_flats
     ranges = current_campaign.ranges(covered: false)
-    # hash = {'Nahariya' => [['Balfour', 123], ['Hertzl', 124]]}
     
     hash = ranges.reduce({}) do |h, ar|
       city, street_hash = ar
@@ -20,9 +19,7 @@ module CampaignsHelper
       
       h.merge city.name => streets
     end
-    select_tag :street_id,
-      grouped_options_for_select(
-        hash
-      )
+    
+    select_tag :street_id, grouped_options_for_select( hash )
   end
 end

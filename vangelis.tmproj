@@ -21,69 +21,24 @@
 	<integer>254</integer>
 	<key>metaData</key>
 	<dict>
-		<key>app/models/assignment_generator.rb</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>23</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>3</integer>
-		</dict>
 		<key>app/models/buildings.rb</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
-				<key>line</key>
-				<integer>73</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>59</integer>
-		</dict>
-		<key>app/models/campaign.rb</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>42</integer>
-				<key>line</key>
-				<integer>8</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>app/models/street.rb</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>56</integer>
+				<integer>452</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>39</integer>
+			<integer>449</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>app/models/assignment_generator.rb</string>
 		<string>app/models/buildings.rb</string>
-		<string>app/models/street.rb</string>
-		<string>app/models/campaign.rb</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>

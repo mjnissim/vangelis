@@ -15,6 +15,7 @@ Vangelis::Application.routes.draw do
   resources :assignments do
     get :report,    on: :new
     get :generate,  on: :new
+    get :mapping,       on: :new
     collection do
       post :generate
     end

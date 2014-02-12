@@ -1,7 +1,9 @@
 class Campaign < ActiveRecord::Base
   validates :name, presence: true
   has_and_belongs_to_many :cities, uniq: true
-  has_many :assignments, dependent: :destroy
+  has_many :assignments, -> { where.not status: Assignment::MAPPING },
+    dependent: :destroy
+  has_many :all_assignments, :class_name => 'Assignment', dependent: :destroy
   has_many :assignment_lines, through: :assignments, source: :lines
   
   # Returns ranges grouped by city and street

@@ -9,7 +9,9 @@ class Assignment < ActiveRecord::Base
   
   # SUGGESTION: MARK BLOCKS THAT ARE BEING BUILT, FOR A FUTURE VISIT.
   
-  STATUSES = [ COMPLETED = 'COMPLETED', ASSIGNED = 'ASSIGNED' ]
+  STATUSES = [  COMPLETED = 'COMPLETED',
+                ASSIGNED = 'ASSIGNED',
+                MAPPING = 'MAPPING' ]
   
   accepts_nested_attributes_for :lines, allow_destroy: true, 
     reject_if: proc { |attributes|
@@ -51,6 +53,10 @@ class Assignment < ActiveRecord::Base
   
   def completed?
     status == COMPLETED
+  end
+  
+  def mapping?
+    status == MAPPING
   end
   
   before_save do |assignment|

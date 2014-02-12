@@ -30,6 +30,8 @@ module AssignmentsHelper
       "text-warning"
     when assignment.completed?
       "text-success"
+    when assignment.mapping?
+      "text-info"
     end
   end
   

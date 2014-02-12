@@ -5,7 +5,7 @@ class AssignmentsController < ApplicationController
   # GET /assignments
   # GET /assignments.json
   def index
-    @assignments = current_campaign.assignments.order(id: :desc)
+    @assignments = current_campaign.all_assignments.order(id: :desc)
   end
 
   # GET /assignments/1
@@ -36,7 +36,6 @@ class AssignmentsController < ApplicationController
         format.html { render action: 'new' }
         format.json { render json: @assignment.errors, status: :unprocessable_entity }
       end
-    
     end
   end
 
@@ -79,6 +78,11 @@ class AssignmentsController < ApplicationController
         render :generate
       end
     end
+  end
+
+  def mapping
+    @assignment = Assignment.new status: Assignment::MAPPING
+    render :new
   end
 
   private
