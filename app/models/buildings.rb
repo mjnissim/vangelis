@@ -325,7 +325,8 @@ class Buildings
     def to_s
       return "#{address}/#{marked_flats.first}" if marked_flats.one?
       
-      flats = " (#{marked_flats.to_a.join(', ')})" if marked_flats.any?
+      
+      flats = " (#{ConciseString.new(marked_flats).str})" if marked_flats.any?
       flats = "" if all_marked?
       
       "#{address}#{flats}"
