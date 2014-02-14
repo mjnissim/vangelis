@@ -6,4 +6,5 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   belongs_to :current_campaign, foreign_key: :current_campaign_id,
           class_name: 'Campaign'
+  validates :nickname, presence: true
 end

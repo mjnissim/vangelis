@@ -15,7 +15,7 @@ div class="page-header"
   = label_tag :assigned_to, "Assign to:"
   = select_tag :assigned_to,
     options_from_collection_for_select(User.all,
-    :id, :email)
+    :id, :nickname)
   
   .form-actions
     = submit_tag "Generate", :class => 'btn btn-primary'

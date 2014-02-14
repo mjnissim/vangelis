@@ -49,7 +49,7 @@ module AssignmentsHelper
   end
   
   def operative assignment
-    email = assignment.assigned_to.try(:email) || assignment.user.email
-    email.truncate(15)
+    name = assignment.assigned_to.try(:nickname) || assignment.user.nickname
+    name.truncate(15)
   end
 end

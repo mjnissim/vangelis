@@ -325,7 +325,6 @@ class Buildings
     def to_s
       return "#{address}/#{marked_flats.first}" if marked_flats.one?
       
-      
       flats = " (#{ConciseString.new(marked_flats).str})" if marked_flats.any?
       flats = "" if all_marked?
       
@@ -333,7 +332,7 @@ class Buildings
     end
     
     def ==( other )
-      address==other.address
+      address == other.address
     end
     
     def <=>( other )
