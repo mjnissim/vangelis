@@ -5,13 +5,11 @@ class Assignment < ActiveRecord::Base
   belongs_to :user
   belongs_to :campaign
   has_many :streets, through: :lines
-  belongs_to :assigned_to, class_name: 'User', foreign_key: :assignee_id
+  belongs_to :assignee, class_name: 'User', foreign_key: :assignee_id
   
-  # SUGGESTION: MARK BLOCKS THAT ARE BEING BUILT, FOR A FUTURE VISIT.
-  
-  STATUSES = [  COMPLETED = 'COMPLETED',
-                ASSIGNED = 'ASSIGNED',
-                MAPPING = 'MAPPING' ]
+  STATUSES = [  COMPLETED = 'COMPLETED' ,
+                ASSIGNED  = 'ASSIGNED'  ,
+                MAPPING   = 'MAPPING'   ]
   
   accepts_nested_attributes_for :lines, allow_destroy: true, 
     reject_if: proc { |attributes|
@@ -59,8 +57,18 @@ class Assignment < ActiveRecord::Base
     status == MAPPING
   end
   
+  def to_param
+    "#{id}#{('-' + url.to_s) if url}"
+  end
+  
   before_save do |assignment|
     # Next line is until I allow the user to set the date himself.
     assignment.date = assignment.created_at || Time.now
+    
+    if assignment.assigned? and assignment.url.blank?
+      assignment.url = SecureRandom.urlsafe_base64(16)
+    end
+    
+    true
   end
 end

@@ -19,13 +19,15 @@ Vangelis::Application.routes.draw do
   resources :assignments do
     get :report,    on: :new
     get :generate,  on: :new
-    get :mapping,       on: :new
+    get :mapping,   on: :new
     collection do
-      post :generate
+      post  :generate
     end
   end
+  
+  get '/assignments/printable/:url', to: 'assignments#print', as: 'printable_assignment'
 
-  resources :assignment_lines
+  # resources :assignment_lines
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

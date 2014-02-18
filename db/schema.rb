@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140214194627) do
+ActiveRecord::Schema.define(version: 20140215101946) do
 
   create_table "assignment_lines", force: true do |t|
     t.integer   "assignment_id", null: false
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20140214194627) do
     t.timestamp "updated_at"
     t.string    "name"
     t.integer   "assignee_id"
+    t.string    "url"
   end
 
   create_table "campaigns", force: true do |t|

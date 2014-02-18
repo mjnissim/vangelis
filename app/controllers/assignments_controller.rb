@@ -1,6 +1,6 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: [:show, :edit, :update, :destroy]
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:printable]
 
   # GET /assignments
   # GET /assignments.json
@@ -84,6 +84,12 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new status: Assignment::MAPPING
     render :new
   end
+  
+  def print
+    url = params[:url].split( '-', 2 ).last
+    @assignment = Assignment.find_by url: url
+    render :printable, layout: false
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -115,7 +121,7 @@ class AssignmentsController < ApplicationController
       lines.map do |name, line|
         current_campaign.assignments.build( user: current_user, report: line,
           status: Assignment::ASSIGNED, city: street.city, name: name,
-          assignee_id: params[:assigned_to])
+          assignee_id: params[:assignee_id])
       end
     end
 end

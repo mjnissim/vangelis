@@ -1,0 +1,17 @@
+h1= "Assignment #{@assignment.name}"
+
+- if @assignment.completed?
+  p This assignment has been completed.
+- else
+
+  p= "Dear #{@assignment.assignee.nickname},"
+  
+  p Please deliver to these addresses:
+
+  - @assignment.lines.each do |line|
+    p
+      strong= "#{line.street.name} #{line.numbers}" 
+
+  p When you do, please notify the administrator.
+  
+  p Thank you!

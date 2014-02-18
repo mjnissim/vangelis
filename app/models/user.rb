@@ -7,4 +7,8 @@ class User < ActiveRecord::Base
   belongs_to :current_campaign, foreign_key: :current_campaign_id,
           class_name: 'Campaign'
   validates :nickname, presence: true
+  
+  def self.admin
+    where( admin: true ).first
+  end
 end

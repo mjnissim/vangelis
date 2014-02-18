@@ -12,8 +12,8 @@ div class="page-header"
   = label_tag :residences_each, "How many residences in each assignment?"
   = number_field_tag :residences_each, 4, :in => 1..10
   
-  = label_tag :assigned_to, "Assign to:"
-  = select_tag :assigned_to,
+  = label_tag :assignee_id, "Assign to:"
+  = select_tag :assignee_id,
     options_from_collection_for_select(User.all,
     :id, :nickname)
   
