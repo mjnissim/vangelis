@@ -20,13 +20,16 @@ Vangelis::Application.routes.draw do
     get :report,    on: :new
     get :generate,  on: :new
     get :mapping,   on: :new
+    member do
+      post  :send_link
+    end
     collection do
       post  :generate
     end
   end
   
   get '/assignments/printable/:url', to: 'assignments#print', as: 'printable_assignment'
-
+  
   # resources :assignment_lines
 
   # The priority is based upon order of creation: first created -> highest priority.

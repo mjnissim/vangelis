@@ -90,6 +90,16 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by url: url
     render :printable, layout: false
   end
+  
+  def send_link
+    UserMailer.assignment( @assignment ).deliver
+    notice = "Successfully sent link to #{ @assignment.assignee.nickname }"
+    redirect_to assignments_path, notice: notice
+    
+    rescue
+      flash[:error] = "Error when trying to send links."
+      redirect_to assignments_path
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

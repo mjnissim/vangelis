@@ -14,6 +14,9 @@ gem 'therubyracer'#, platforms: :ruby
 gem "less-rails" #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
 gem "twitter-bootstrap-rails"
 
+gem 'newrelic_rpm'
+
+
 group :production do
   gem 'pg'
 end

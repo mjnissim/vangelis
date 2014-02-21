@@ -3,9 +3,9 @@ class UserMailer < ActionMailer::Base
   
   def assignment assignment
     @assignment = assignment
-    
-    mail(to: assignment.assignee.email,
-      subject: "Assignment #{assignment.name} (#{assignment.streets.first.name})"
-    )
+    subject = "Assignment #{assignment.name} \
+      (#{assignment.streets.first.name})"
+
+    mail to: assignment.assignee.email, subject: subject
   end
 end

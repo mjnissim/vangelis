@@ -17,6 +17,7 @@ table class="table table-striped table-hover table-condensed"
       th
       th
       th
+      th
   tbody
     - @assignments.each do |assignment|
       tr
@@ -31,6 +32,10 @@ table class="table table-striped table-hover table-condensed"
           - if assignment.assigned?
             = link_to printable_assignment_url( assignment ), :class => 'btn btn-mini' do
               i.icon-print
+        td
+          - if assignment.assigned?
+            = link_to send_link_assignment_url( assignment ), :class => 'btn btn-mini', method: :post do
+              i.icon-envelope
         td
           - if assignment.assigned?
             = complete_assignment assignment

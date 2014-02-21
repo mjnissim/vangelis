@@ -1,7 +1,10 @@
 = form_for @user, :html => { :class => "form-horizontal" } do |f|
-  - pwd = SecureRandom.hex(8)
-  = f.hidden_field :password, value: pwd
-  = f.hidden_field :password_confirmation, value: pwd
+
+  - if @user.password.blank?
+    - pwd = SecureRandom.hex(8)
+    = f.hidden_field :password, value: pwd
+    = f.hidden_field :password_confirmation, value: pwd
+    
   .control-group
     = f.label :nickname, :class => 'control-label'
     .controls
