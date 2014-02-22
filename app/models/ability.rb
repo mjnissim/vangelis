@@ -4,7 +4,7 @@ class Ability
   def initialize(user)
 
       user ||= User.new # guest user (not logged in)
-      can :print, :all
+      can [:print, :complete], Assignment
       
       if user.admin?
         can :manage, :all

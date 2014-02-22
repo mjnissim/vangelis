@@ -3,6 +3,11 @@ div class="page-header"
   
 = form_tag generate_assignments_url do
 
+  = label_tag :assignee_id, "Assign to:"
+  = select_tag :assignee_id,
+    options_from_collection_for_select(User.all,
+    :id, :nickname)
+  
   = label_tag :street, "Please select street:"
   = street_select_with_uncovered_flats
 
@@ -11,11 +16,6 @@ div class="page-header"
   
   = label_tag :residences_each, "How many residences in each assignment?"
   = number_field_tag :residences_each, 4, :in => 1..10
-  
-  = label_tag :assignee_id, "Assign to:"
-  = select_tag :assignee_id,
-    options_from_collection_for_select(User.all,
-    :id, :nickname)
   
   .form-actions
     = submit_tag "Generate", :class => 'btn btn-primary'

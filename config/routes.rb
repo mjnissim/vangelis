@@ -22,6 +22,7 @@ Vangelis::Application.routes.draw do
     get :mapping,   on: :new
     member do
       post  :send_link
+      patch  :complete
     end
     collection do
       post  :generate

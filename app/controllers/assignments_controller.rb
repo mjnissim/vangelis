@@ -1,6 +1,6 @@
 class AssignmentsController < ApplicationController
-  before_action :set_assignment, only: [:show, :edit, :update, :destroy]
-  load_and_authorize_resource except: [:printable]
+  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :complete]
+  load_and_authorize_resource
 
   # GET /assignments
   # GET /assignments.json
@@ -85,12 +85,6 @@ class AssignmentsController < ApplicationController
     render :new
   end
   
-  def print
-    url = params[:url].split( '-', 2 ).last
-    @assignment = Assignment.find_by url: url
-    render :printable, layout: false
-  end
-  
   def send_link
     UserMailer.assignment( @assignment ).deliver
     notice = "Successfully sent link to #{ @assignment.assignee.nickname }"
@@ -99,6 +93,17 @@ class AssignmentsController < ApplicationController
     rescue
       flash[:error] = "Error when trying to send links."
       redirect_to assignments_path
+  end
+  
+  def print
+    url = params[:url].split( '-', 2 ).last
+    @assignment = Assignment.find_by url: url
+    render :printable, layout: false
+  end
+  
+  def complete
+    @assignment.update_attributes status: Assignment::COMPLETED
+    render :printable, layout: false
   end
 
   private

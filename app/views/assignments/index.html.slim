@@ -30,7 +30,7 @@ table class="table table-striped table-hover table-condensed"
         td= assignment.comments.to_s.truncate( 45 )
         td
           - if assignment.assigned?
-            = link_to printable_assignment_url( assignment ), :class => 'btn btn-mini' do
+            = link_to printable_assignment_url( assignment ), :class => 'btn btn-mini', :target => "_blank" do
               i.icon-print
         td
           - if assignment.assigned?

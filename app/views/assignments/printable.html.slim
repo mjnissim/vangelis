@@ -3,19 +3,25 @@ html
   head
     title= "#{@assignment.name}"
     meta content='text/html; charset=UTF-8' http-equiv='Content-Type'
+    = csrf_meta_tags
 
   body
 
     h1= "#{@assignment.name}"
 
     - if @assignment.completed?
-      p This assignment has been completed.
+      p= "#{@assignment.name} has been marked as 'completed'."
     - else
 
       - @assignment.lines.each do |line|
         p
           strong= "#{line.street.name} #{line.numbers}" 
 
-      p Please notify administrator when completed.
+      p
+        = link_to "Click here",
+          complete_assignment_path( @assignment ), method: :patch,
+          confirm: "Mark #{@assignment.name} as completed?"
+        '  when completed.
   
-      p Thank you!
+  = javascript_include_tag "application"
+  
