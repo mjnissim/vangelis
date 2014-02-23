@@ -43,8 +43,9 @@ module AssignmentsHelper
   end
   
   def complete_assignment assignment
-    link_to "#{assignment.name} ✓", assignment_url(assignment, assignment: { status: Assignment::COMPLETED}), method: :patch,
-      :class => "btn btn-mini btn-success btn-block span1",
+    link_to "#{assignment.name} ✓", 
+      assignment_url(assignment, assignment: { status: Assignment::COMPLETED}),
+      method: :patch, :class => "btn btn-mini btn-success btn-block span1",
       data: { confirm: "Was #{assignment.name} completed accurately?" }
   end
   

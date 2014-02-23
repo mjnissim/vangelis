@@ -8,6 +8,10 @@ class User < ActiveRecord::Base
           class_name: 'Campaign'
   validates :nickname, presence: true
   
+  def assignments
+    Assignment.where('user_id = :user OR assignee_id = :user', user: self)
+  end
+  
   def self.admin
     where( admin: true ).first
   end

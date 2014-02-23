@@ -20,7 +20,7 @@ html
       p
         = link_to "Click here",
           complete_assignment_path( @assignment ), method: :patch,
-          confirm: "Mark #{@assignment.name} as completed?"
+          data: { confirm: "Mark #{@assignment.name} as completed?" }
         '  when completed.
   
   = javascript_include_tag "application"
