@@ -352,9 +352,20 @@ class Buildings
     end
     
     def splat
+      return [ self ] if reported_private?
+      
       marked_flats.map do |flat|
         Building.new( "#{address}/#{flat}", street: @street )
       end
+    end
+    
+    # Makes sure that this building was definitely reported,
+    # but never with flats, i.e. - it's a private house.
+    def reported_private?
+      return unless @street
+      
+      bld = @street.buildings[ self ]
+      bld.present? and not bld.flats?
     end
     
     def switch_markings
