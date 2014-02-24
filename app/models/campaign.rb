@@ -1,6 +1,6 @@
 class Campaign < ActiveRecord::Base
   validates :name, presence: true
-  has_and_belongs_to_many :cities, uniq: true
+  has_and_belongs_to_many :cities, -> { uniq }
   has_many :assignments, -> { where.not status: Assignment::MAPPING },
     dependent: :destroy
   has_many :all_assignments, :class_name => 'Assignment', dependent: :destroy

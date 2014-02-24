@@ -289,7 +289,7 @@ class BuildingsTest < ActiveSupport::TestCase
   test "Switch flat's markings" do
     br = Buildings.new('3b/6 3b/4 3a')
     br.switch_markings = true
-    str = "3b (1, 2, 3, 5)"
+    str = "3b (1-3, 5)"
     assert_equal( str, br.buildings.map(&:to_s).join(", ") )
   end
   
