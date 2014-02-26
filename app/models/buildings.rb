@@ -203,7 +203,7 @@ class Buildings
       ar = *low..high
       ar.select!{ |n| n.send "#{even_odd}?" } if even_odd?
       
-      ar.map{|num| Building.new( num.to_s, street: @street )}
+      ar.map{ |num| Building.new( num.to_s, street: @street ) }
     end
     
     # Returns "even", "odd", or nil.

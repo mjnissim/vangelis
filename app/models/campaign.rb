@@ -6,6 +6,12 @@ class Campaign < ActiveRecord::Base
   has_many :all_assignments, :class_name => 'Assignment', dependent: :destroy
   has_many :assignment_lines, through: :assignments, source: :lines
   
+  # TODO: PULLING ASSIGNMENT LINES FROM DB ACCORDING TO ALPHABETIC STREET NAMES
+  # MIGHT HELP ALL LISTS WITH STREETS APPEAR BY ALPHABETIC ORDER, WITHOUT YOUR HAVING
+  # TO MANUALLY RE-ORDER THEM. FOR INSTANCE: STREET LIST ON THE "GENERATE" ASSIGNMENTS
+  # FORM. YOU MIGHT ORDER ASSIGNMENT LINES BY STREET NAME IN OTHER PLACES TOO, LIKE
+  # THE STREET CLASS.
+  
   # Returns ranges grouped by city and street
   def ranges covered: true, street: nil
     grouped_lines.each do |city, streets|

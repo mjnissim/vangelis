@@ -8,6 +8,9 @@ class User < ActiveRecord::Base
           class_name: 'Campaign'
   validates :nickname, presence: true
   
+  # TODO: MAKE SURE VALIDATIONS PROHIBIT SAME NICKNAME.
+  # SHOULD BE SIMPLE.
+  
   def assignments
     Assignment.where('user_id = :user OR assignee_id = :user', user: self)
   end

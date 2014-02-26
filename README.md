@@ -3,6 +3,15 @@ Vangelis
 
 Systematised guerilla evangelism made easy.
 
+Still needs to be implemented:
+
+* Ignore list. Put in addresses that it will ignore, until a given date, or indefinitely.
+
+* Link to signout.
+
+
+Other things to mention:
+
 
 * Ruby version
 
