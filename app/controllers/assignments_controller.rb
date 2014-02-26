@@ -103,7 +103,7 @@ class AssignmentsController < ApplicationController
   
   def complete
     @assignment.update_attributes status: Assignment::COMPLETED
-    render :printable, layout: false
+    redirect_to printable_assignment_path( @assignment )
   end
 
   private
